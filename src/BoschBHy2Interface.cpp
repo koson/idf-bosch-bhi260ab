@@ -5,6 +5,7 @@
 #include "freertos/task.h"
 #include <esp_log.h>
 #include "I2C.hpp"
+#include "common.h"
 #include "../driver/bhy2.h"
 #include "../driver/bhy2_parse.h"
 
@@ -25,8 +26,8 @@ int8_t boschI2cRead(uint8_t reg_addr, uint8_t *reg_data, uint32_t len, void *int
     uint8_t dev_addr = *(uint8_t *)intf_ptr;
     try
     {
-        _bme680Sensor->getBus()->syncWrite(I2CAddress(dev_addr), {reg_addr});
-        vector<uint8_t> data = _bme680Sensor->getBus()->syncRead(I2CAddress(dev_addr), len);
+        _bmi260Sensor->getBus()->syncWrite(I2CAddress(dev_addr), {reg_addr});
+        vector<uint8_t> data = _bmi260Sensor->getBus()->syncRead(I2CAddress(dev_addr), len);
         memcpy(reg_data, data.data(), len);
         return ESP_OK;
     }
@@ -49,7 +50,7 @@ int8_t boschI2cWrite(uint8_t reg_addr, const uint8_t *reg_data, uint32_t len, vo
         {
             data.push_back(reg_data[i]);
         }
-        _bme680Sensor->getBus()->syncWrite(I2CAddress(dev_addr), data);
+        _bmi260Sensor->getBus()->syncWrite(I2CAddress(dev_addr), data);
         return ESP_OK;
     }
     catch (const I2CException &e)
