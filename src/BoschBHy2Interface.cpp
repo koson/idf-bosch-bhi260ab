@@ -5,8 +5,8 @@
 #include "freertos/task.h"
 #include <esp_log.h>
 #include "I2C.hpp"
-#include "bhy2.h"
-#include "bhy2_parse.h"
+#include "../driver/bhy2.h"
+#include "../driver/bhy2_parse.h"
 
 #define NUM_USED_OUTPUTS 9
 
