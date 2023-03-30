@@ -69,7 +69,7 @@ int8_t boschI2cWrite(uint8_t reg_addr, const uint8_t *reg_data, uint32_t len, vo
     }
 }
 
-static void print_api_error(int8_t rslt, struct bhy2_dev *dev)
+static void print_api_error(int8_t rslt)
 {
     if (rslt != BHY2_OK)
     {
@@ -193,8 +193,8 @@ static void upload_firmware(uint8_t boot_stat)
         printf("%s\r\n", get_sensor_error_text(sensor_error));
     }
 
-    print_api_error(rslt, &bhy2Device);
-    print_api_error(temp_rslt, &bhy2Device);
+    print_api_error(rslt);
+    print_api_error(temp_rslt);
 
 #ifdef UPLOAD_FIRMWARE_TO_FLASH
     printf("Booting from FLASH.\r\n");
@@ -210,8 +210,8 @@ static void upload_firmware(uint8_t boot_stat)
         printf("%s\r\n", get_sensor_error_text(sensor_error));
     }
 
-    print_api_error(rslt, &bhy2Device);
-    print_api_error(temp_rslt, &bhy2Device);
+    print_api_error(rslt);
+    print_api_error(temp_rslt);
 }
 
 static void parse_quaternion(const struct bhy2_fifo_parse_data_info *callback_info, void *callback_ref)
@@ -232,7 +232,7 @@ static void parse_quaternion(const struct bhy2_fifo_parse_data_info *callback_in
     s = (uint32_t)(timestamp / UINT64_C(1000000000));
     ns = (uint32_t)(timestamp - (s * UINT64_C(1000000000)));
 
-    printf("SID: %u; T: %u.%09u; x: %f, y: %f, z: %f, w: %f; acc: %.2f\r\n",
+    printf("SID: %u; T: %lu.%09lu; x: %f, y: %f, z: %f, w: %f; acc: %.2f\r\n",
            callback_info->sensor_id,
            s,
            ns,
@@ -253,39 +253,39 @@ esp_err_t initBHy2(Motion::BHI260ABSensor *motionSensor)
     uint8_t hintr_ctrl, hif_ctrl, boot_status;
 
     int8_t rslt = bhy2_init(BHY2_I2C_INTERFACE, boschI2cRead, boschI2cWrite, boschDelayUs, BHY2_RD_WR_LEN, NULL, &bhy2Device);
-    print_api_error(rslt, &bhy2Device);
+    print_api_error(rslt);
 
     rslt = bhy2_soft_reset(&bhy2Device);
-    print_api_error(rslt, &bhy2Device);
+    print_api_error(rslt);
 
     rslt = bhy2_get_product_id(&product_id, &bhy2Device);
-    print_api_error(rslt, &bhy2Device);
+    print_api_error(rslt);
     ESP_LOGD("BHy2", "BHI260AB found. Product ID read %X", product_id);
 
     /* Check if the sensor is ready to load firmware */
     rslt = bhy2_get_boot_status(&boot_status, &bhy2Device);
-    print_api_error(rslt, &bhy2Device);
+    print_api_error(rslt);
 
     if (boot_status & BHY2_BST_HOST_INTERFACE_READY)
     {
-        upload_firmware(boot_status, &bhy2Device);
+        upload_firmware(boot_status);
 
         rslt = bhy2_get_kernel_version(&version, &bhy2Device);
-        print_api_error(rslt, &bhy2Device);
+        print_api_error(rslt);
         if ((rslt == BHY2_OK) && (version != 0))
         {
             printf("Boot successful. Kernel version %u.\r\n", version);
         }
 
         rslt = bhy2_register_fifo_parse_callback(BHY2_SYS_ID_META_EVENT, parse_meta_event, NULL, &bhy2Device);
-        print_api_error(rslt, &bhy2Device);
+        print_api_error(rslt);
         rslt = bhy2_register_fifo_parse_callback(BHY2_SYS_ID_META_EVENT_WU, parse_meta_event, NULL, &bhy2Device);
-        print_api_error(rslt, &bhy2Device);
+        print_api_error(rslt);
         rslt = bhy2_register_fifo_parse_callback(QUAT_SENSOR_ID, parse_quaternion, NULL, &bhy2Device);
-        print_api_error(rslt, &bhy2Device);
+        print_api_error(rslt);
 
         rslt = bhy2_get_and_process_fifo(work_buffer, WORK_BUFFER_SIZE, &bhy2Device);
-        print_api_error(rslt, &bhy2Device);
+        print_api_error(rslt);
     }
     else
     {
@@ -295,23 +295,12 @@ esp_err_t initBHy2(Motion::BHI260ABSensor *motionSensor)
 
     /* Update the callback table to enable parsing of sensor data */
     rslt = bhy2_update_virtual_sensor_list(&bhy2Device);
-    print_api_error(rslt, &bhy2Device);
+    print_api_error(rslt);
 
     float sample_rate = 100.0; /* Read out data measured at 100Hz */
     uint32_t report_latency_ms = 0; /* Report immediately */
     rslt = bhy2_set_virt_sensor_cfg(QUAT_SENSOR_ID, sample_rate, report_latency_ms, &bhy2Device);
-    print_api_error(rslt, &bhy2Device);
+    print_api_error(rslt);
     printf("Enable %s at %.2fHz.\r\n", get_sensor_name(QUAT_SENSOR_ID), sample_rate);
-
-    while (rslt == BHY2_OK)
-    {
-        if (get_interrupt_status())
-        {
-            /* Data from the FIFO is read and the relevant callbacks if registered are called */
-            rslt = bhy2_get_and_process_fifo(work_buffer, WORK_BUFFER_SIZE, &bhy2Device);
-            print_api_error(rslt, &bhy2Device);
-        }
-    }
-
     return ESP_OK;
 }
