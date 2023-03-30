@@ -1,5 +1,5 @@
 menu "Bosch BHI260AB Sensor"
-    config BME688_ADDRESS
+    config BHI260AB_ADDRESS
         hex
         prompt "Gyro/Accel BHI260AB Sensor Address"
         default 0x29
