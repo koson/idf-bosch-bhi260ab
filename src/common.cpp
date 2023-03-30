@@ -35,7 +35,7 @@
  *
  */
 
-#include "common.h"
+#include "common.hpp"
 
 #include <stdio.h>
 #include <string.h>

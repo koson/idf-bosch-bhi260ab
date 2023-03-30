@@ -5,7 +5,7 @@
 #include "freertos/task.h"
 #include <esp_log.h>
 #include "I2C.hpp"
-#include "common.h"
+#include "common.hpp"
 #include "../driver/bhy2.h"
 #include "../driver/bhy2_parse.h"
 
