@@ -7,9 +7,4 @@ namespace Motion
     {
         return initBHy2(this);
     }
-
-    void BHI260ABSensor::startSensorLoop()
-    {
-        startBHy2Loop();
-    }
 }

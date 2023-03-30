@@ -21,6 +21,5 @@ namespace Motion
             return this->i2cMasterBus;
         }
         esp_err_t init();
-        void startSensorLoop();
     };
 }
