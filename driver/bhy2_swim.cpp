@@ -93,7 +93,7 @@ int8_t bhy2_swim_set_config(const void *buffer, struct bhy2_dev *dev)
  * @return  status code, BHY_HIF_E_SUCCESS in case of success
  *
  */
-int8_t bhy2_swim_get_config(void *buffer, struct bhy2_dev *dev)
+int8_t bhy2_swim_get_config(uint8_t *buffer, struct bhy2_dev *dev)
 {
     int8_t rslt = BHY2_OK;
 

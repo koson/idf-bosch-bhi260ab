@@ -69,7 +69,7 @@ int8_t bhy2_swim_parse_data(const uint8_t *data, struct bhy2_swim_algo_output *o
  * @return  status code, BHY_HIF_E_SUCCESS in case of success
  *
  */
-int8_t bhy2_swim_get_config(void *buffer, struct bhy2_dev *dev);
+int8_t bhy2_swim_get_config(uint8_t *buffer, struct bhy2_dev *dev);
 
 /*!
  * @brief To get the SWIM Algorithm version
