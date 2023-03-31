@@ -9,7 +9,7 @@
 #include "../driver/bhy2.hpp"
 #include "../driver/bhy2_parse.hpp"
 
-#define UPLOAD_FIRMWARE_TO_FLASH
+// #define UPLOAD_FIRMWARE_TO_FLASH
 #ifdef UPLOAD_FIRMWARE_TO_FLASH
 #include "PRO100_BHI260_aux_BMM150-flash.fw.hpp"
 #else
