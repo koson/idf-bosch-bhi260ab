@@ -36,6 +36,7 @@ namespace Motion
         uint8_t dev_addr = *(uint8_t *)intf_ptr;
         try
         {
+            ESP_LOGI("BHy2", "read2");
             _bmi260Sensor->getBus()->syncWrite(I2CAddress(dev_addr), {reg_addr});
             vector<uint8_t> data = _bmi260Sensor->getBus()->syncRead(I2CAddress(dev_addr), len);
             memcpy(reg_data, data.data(), len);
@@ -252,9 +253,10 @@ namespace Motion
         uint8_t product_id = 0;
         uint16_t version = 0;
         uint8_t work_buffer[WORK_BUFFER_SIZE];
-        uint8_t hintr_ctrl, hif_ctrl, boot_status;
+        uint8_t boot_status;
 
-        int8_t rslt = bhy2_init(BHY2_I2C_INTERFACE, boschI2cRead, boschI2cWrite, boschDelayUs, BHY2_RD_WR_LEN, NULL, &bhy2Device);
+        static uint8_t dev_addr{CONFIG_BHI260AB_ADDRESS};
+        int8_t rslt = bhy2_init(BHY2_I2C_INTERFACE, boschI2cRead, boschI2cWrite, boschDelayUs, BHY2_RD_WR_LEN, &dev_addr, &bhy2Device);
         print_api_error(rslt);
 
         // rslt = bhy2_soft_reset(&bhy2Device);
