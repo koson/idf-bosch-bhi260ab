@@ -257,18 +257,41 @@ namespace Motion
         uint8_t product_id = 0;
         uint16_t version = 0;
         uint8_t work_buffer[WORK_BUFFER_SIZE];
-        uint8_t boot_status;
+        uint8_t hintr_ctrl, hif_ctrl, boot_status;
 
         static uint8_t dev_addr{CONFIG_BHI260AB_ADDRESS};
         int8_t rslt = bhy2_init(BHY2_I2C_INTERFACE, boschI2cRead, boschI2cWrite, boschDelayUs, BHY2_RD_WR_LEN, &dev_addr, &bhy2Device);
         print_api_error(rslt);
 
-        // rslt = bhy2_soft_reset(&bhy2Device);
+        rslt = bhy2_soft_reset(&bhy2Device);
         print_api_error(rslt);
 
         rslt = bhy2_get_product_id(&product_id, &bhy2Device);
         print_api_error(rslt);
         ESP_LOGD("BHy2", "BHI260AB found. Product ID read %X", product_id);
+
+        /* Check the interrupt pin and FIFO configurations. Disable status and debug */
+        hintr_ctrl = BHY2_ICTL_DISABLE_STATUS_FIFO | BHY2_ICTL_DISABLE_DEBUG;
+
+        rslt = bhy2_set_host_interrupt_ctrl(hintr_ctrl, &bhy2Device);
+        print_api_error(rslt);
+        rslt = bhy2_get_host_interrupt_ctrl(&hintr_ctrl, &bhy2Device);
+        print_api_error(rslt);
+
+        printf("Host interrupt control\r\n");
+        printf("    Wake up FIFO %s.\r\n", (hintr_ctrl & BHY2_ICTL_DISABLE_FIFO_W) ? "disabled" : "enabled");
+        printf("    Non wake up FIFO %s.\r\n", (hintr_ctrl & BHY2_ICTL_DISABLE_FIFO_NW) ? "disabled" : "enabled");
+        printf("    Status FIFO %s.\r\n", (hintr_ctrl & BHY2_ICTL_DISABLE_STATUS_FIFO) ? "disabled" : "enabled");
+        printf("    Debugging %s.\r\n", (hintr_ctrl & BHY2_ICTL_DISABLE_DEBUG) ? "disabled" : "enabled");
+        printf("    Fault %s.\r\n", (hintr_ctrl & BHY2_ICTL_DISABLE_FAULT) ? "disabled" : "enabled");
+        printf("    Interrupt is %s.\r\n", (hintr_ctrl & BHY2_ICTL_ACTIVE_LOW) ? "active low" : "active high");
+        printf("    Interrupt is %s triggered.\r\n", (hintr_ctrl & BHY2_ICTL_EDGE) ? "pulse" : "level");
+        printf("    Interrupt pin drive is %s.\r\n", (hintr_ctrl & BHY2_ICTL_OPEN_DRAIN) ? "open drain" : "push-pull");
+
+        /* Configure the host interface */
+        hif_ctrl = 0;
+        rslt = bhy2_set_host_intf_ctrl(hif_ctrl, &bhy2Device);
+        print_api_error(rslt);
 
         /* Check if the sensor is ready to load firmware */
         rslt = bhy2_get_boot_status(&boot_status, &bhy2Device);
