@@ -191,18 +191,16 @@ namespace Motion
         printf("Loading firmware into RAM.\r\n");
         rslt = bhy2_upload_firmware_to_ram(bhy2_firmware_image, sizeof(bhy2_firmware_image), &bhy2Device);
 #endif
-        printf("firmware loaded.\r\n");
         temp_rslt = bhy2_get_error_value(&sensor_error, &bhy2Device);
         if (sensor_error)
         {
             printf("1. %s\r\n", get_sensor_error_text(sensor_error));
         }
 
-        printf("2");
         print_api_error(rslt);
-        printf("3");
         print_api_error(temp_rslt);
-
+        printf("firmware loaded.\r\n");
+        
 #ifdef UPLOAD_FIRMWARE_TO_FLASH
         printf("Booting from FLASH.\r\n");
         rslt = bhy2_boot_from_flash(&bhy2Device);
