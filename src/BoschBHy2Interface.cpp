@@ -37,7 +37,7 @@ namespace Motion
         uint8_t dev_addr = *(uint8_t *)intf_ptr;
         try
         {
-            ESP_LOGI("BHy2", "read2");
+            ESP_LOGI("BHy2", "reading %lu", len);
             _bmi260Sensor->getBus()->syncWrite(I2CAddress(dev_addr), {reg_addr});
             vector<uint8_t> data = _bmi260Sensor->getBus()->syncRead(I2CAddress(dev_addr), len);
             memcpy(reg_data, data.data(), len);
