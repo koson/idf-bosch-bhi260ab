@@ -6,8 +6,8 @@
 #include <esp_log.h>
 #include "I2C.hpp"
 #include "common.hpp"
-#include "../driver/bhy2.h"
-#include "../driver/bhy2_parse.h"
+#include "../driver/bhy2.hpp"
+#include "../driver/bhy2_parse.hpp"
 
 #ifdef UPLOAD_FIRMWARE_TO_FLASH
 #include "bhi260ap/BHI260AP_BMM150-flash.fw.hpp"
@@ -257,7 +257,7 @@ namespace Motion
         int8_t rslt = bhy2_init(BHY2_I2C_INTERFACE, boschI2cRead, boschI2cWrite, boschDelayUs, BHY2_RD_WR_LEN, NULL, &bhy2Device);
         print_api_error(rslt);
 
-        rslt = bhy2_soft_reset(&bhy2Device);
+        // rslt = bhy2_soft_reset(&bhy2Device);
         print_api_error(rslt);
 
         rslt = bhy2_get_product_id(&product_id, &bhy2Device);

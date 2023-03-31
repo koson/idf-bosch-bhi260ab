@@ -36,7 +36,7 @@
 *
 */
 
-#include "bhy2_hif.h"
+#include "bhy2_hif.hpp"
 
 /*! Mask definitions for SPI read/write address */
 #define BHY2_SPI_RD_MASK  UINT8_C(0x80)

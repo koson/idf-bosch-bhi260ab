@@ -42,7 +42,7 @@
 extern "C" {
 #endif /*__cplusplus */
 
-#include "bhy2.h"
+#include "bhy2.hpp"
 
 /**
  * @brief Function to parse FIFO frame data into temperature

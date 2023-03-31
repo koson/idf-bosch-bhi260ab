@@ -42,8 +42,8 @@
 #include <stdint.h>
 #include <stdlib.h>
 
-#include "bhy2.h"
-#include "bhy2_klio_defs.h"
+#include "bhy2.hpp"
+#include "bhy2_klio_defs.hpp"
 
 #ifdef __cplusplus
 extern "C" {

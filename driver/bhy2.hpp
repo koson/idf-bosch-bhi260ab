@@ -43,7 +43,7 @@
 extern "C" {
 #endif /*__cplusplus */
 
-#include "bhy2_defs.h"
+#include "bhy2_defs.hpp"
 
 /**
  * @brief Function to link the callback interfaces

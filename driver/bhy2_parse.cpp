@@ -36,8 +36,8 @@
 *
 */
 
-#include "bhy2.h"
-#include "bhy2_parse.h"
+#include "bhy2.hpp"
+#include "bhy2_parse.hpp"
 
 void bhy2_parse_temperature_celsius(const uint8_t *data, bhy2_float *temperature)
 {

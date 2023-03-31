@@ -36,9 +36,9 @@
 *
 */
 
-#include "bhy2.h"
-#include "bhy2_hif.h"
-#include "bhy2_defs.h"
+#include "bhy2.hpp"
+#include "bhy2_hif.hpp"
+#include "bhy2_defs.hpp"
 
 typedef enum
 {

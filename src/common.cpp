@@ -42,7 +42,7 @@
 #include <stdbool.h>
 #include <stdlib.h>
 
-#include "../driver/bhy2_parse.h"
+#include "../driver/bhy2_parse.hpp"
 
 #define BHA260_SHUTTLE_ID  0x139
 #define BHI260_SHUTTLE_ID  0x119

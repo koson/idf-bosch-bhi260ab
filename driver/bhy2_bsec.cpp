@@ -30,43 +30,48 @@
  * IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  *
- * @file       bhy2_bsec.h
+ * @file       bhy2_bsec.c
  * @date       2022-10-17
  * @version    v1.4.1
  *
  */
 
-#ifndef _BHY2_BSEC_H_
-#define _BHY2_BSEC_H_
-
-#include <stdint.h>
+/*********************************************************************/
+/* system header files */
+/*********************************************************************/
+#include <string.h>
 #include <stdlib.h>
-#include <stdlib.h>
 
-#include "bhy2.h"
+/*********************************************************************/
+/* BHY2 SensorAPI header files */
+/*********************************************************************/
+#include "bhy2.hpp"
 
-#ifdef __cplusplus
-extern "C" {
-#endif /*__cplusplus */
+/*********************************************************************/
+/* own header files */
+/*********************************************************************/
+#include "bhy2_bsec.hpp"
 
-#define BHY2_SENSOR_ID_AIR_QUALITY  UINT8_C(115)
-
-struct bhy2_bsec_air_quality
+void bhy2_bsec_parse_air_quality(const uint8_t *payload, struct bhy2_bsec_air_quality *data)
 {
-    float comp_temp; /* Sensor heat compensated temperature (deg C) */
-    float comp_hum; /* Sensor heat compensated humidity (%rH) */
-    float comp_gas; /* Compensated gas resistance (ohms) */
-    float iaq; /* Indoor Air Quality index */
-    float static_iaq; /* Static IAQ index */
-    float e_co2; /* Equivalent CO2 (ppm) */
-    float voc; /* Volatile organic compounds (ppb) */
-    uint8_t iaq_accuracy; /* IAQ index accuracy (0-3) */
-};
+    uint8_t i = 0;
 
-void bhy2_bsec_parse_air_quality(const uint8_t *payload, struct bhy2_bsec_air_quality *data);
-
-#ifdef __cplusplus
+    if ((payload != NULL) && (data != NULL))
+    {
+        data->comp_temp = BHY2_LE2U32(payload + i);
+        i += 4;
+        data->comp_hum = BHY2_LE2U32(payload + i);
+        i += 4;
+        data->comp_gas = BHY2_LE2U32(payload + i);
+        i += 4;
+        data->iaq = BHY2_LE2U32(payload + i);
+        i += 4;
+        data->static_iaq = BHY2_LE2U32(payload + i);
+        i += 4;
+        data->e_co2 = BHY2_LE2U32(payload + i);
+        i += 4;
+        data->voc = BHY2_LE2U32(payload + i);
+        i += 4;
+        data->iaq_accuracy = payload[i];
+    }
 }
-#endif /*__cplusplus */
-
-#endif /* _BHY2_BSEC_H_ */

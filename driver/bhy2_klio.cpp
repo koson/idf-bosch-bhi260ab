@@ -43,11 +43,11 @@
 
 /*********************************************************************/
 /* BHY2 SensorAPI header files */
-#include "bhy2.h"
+#include "bhy2.hpp"
 
 /*********************************************************************/
 /* own header files */
-#include "bhy2_klio.h"
+#include "bhy2_klio.hpp"
 
 int8_t bhy2_klio_read_pattern(const uint8_t id, uint8_t *buffer, uint16_t *length, struct bhy2_dev *dev)
 {

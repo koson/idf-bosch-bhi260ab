@@ -30,47 +30,70 @@
 * IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *
-* @file       bhy2_pdr.h
+* @file       bhy2_swim.h
 * @date       2022-10-17
 * @version    v1.4.1
 *
 */
 
-#ifndef __BHY2_PDR_H__
-#define __BHY2_PDR_H__
+#ifndef _BHY2_SWIM_H_
+#define _BHY2_SWIM_H_
 
 #include <stdint.h>
 #include <stdlib.h>
 
-#include "bhy2.h"
-#include "bhy2_pdr_defs.h"
+#include "bhy2.hpp"
+#include "bhy2_swim_defs.hpp"
 
 #ifdef __cplusplus
 extern "C" {
 #endif /*__cplusplus */
 
-void bhy2_pdr_parse_frame(const uint8_t *data, struct bhy2_pdr_frame *pdr_frame);
+/*!
+ * @brief Parsing the fifo data to SWIM output structure format
+ *
+ * @param[in] data parameter
+ * @param[out] bhy2_swim_aglo_output to store parameter data
+ *
+ * @return  API error codes
+ *
+ */
+int8_t bhy2_swim_parse_data(const uint8_t *data, struct bhy2_swim_algo_output *output);
 
-int8_t bhy2_pdr_reset_full(struct bhy2_dev *dev);
+/*!
+ * @brief To get the SWIM configuration parameters like swim length and handedness
+ *
+ * @param[out] buffer to store parameter data
+ * @param[in] dev hub handle
+ *
+ * @return  status code, BHY_HIF_E_SUCCESS in case of success
+ *
+ */
+int8_t bhy2_swim_get_config(void *buffer, struct bhy2_dev *dev);
 
-int8_t bhy2_pdr_reset_position(struct bhy2_dev *dev);
+/*!
+ * @brief To get the SWIM Algorithm version
+ *
+ * @param[out] buffer to store version data
+ * @param[in] dev hub handle
+ *
+ * @return  status code, BHY_HIF_E_SUCCESS in case of success
+ *
+ */
+int8_t bhy2_swim_get_version(bhy2_swim_version_t *buffer, struct bhy2_dev *dev);
 
-int8_t bhy2_pdr_set_ref_heading_del(float heading, struct bhy2_dev *dev);
-
-int8_t bhy2_pdr_set_step_info(float step_length, float step_length_acc, struct bhy2_dev *dev);
-
-int8_t bhy2_pdr_set_hand(uint8_t right_hand, struct bhy2_dev *dev);
-
-int8_t bhy2_pdr_get_driver_version(struct bhy2_pdr_ver *version, struct bhy2_dev *dev);
-
-int8_t bhy2_pdr_get_algo_version(struct bhy2_pdr_ver *version, struct bhy2_dev *dev);
-
-int8_t bhy2_pdr_get_pdr_variant(uint8_t *variant, struct bhy2_dev *dev);
-
-int8_t bhy2_pdr_get_device_position(uint8_t *dev_pos, struct bhy2_dev *dev);
+/*!
+ * @brief To set the SWIM configuration parameters like swim length and handedness
+ * @param[out] buffer to store parameter data
+ * @param[in] dev hub handle
+ *
+ * @return  status code, BHY_HIF_E_SUCCESS in case of success
+ *
+ */
+int8_t bhy2_swim_set_config(const void *buffer, struct bhy2_dev *dev);
 
 #ifdef __cplusplus
 }
 #endif /*__cplusplus */
 
-#endif
+#endif /* _BHY2_SWIM_H_ */

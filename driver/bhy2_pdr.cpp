@@ -43,11 +43,11 @@
 
 /*********************************************************************/
 /* BHY2 SensorAPI header files */
-#include "bhy2.h"
+#include "bhy2.hpp"
 
 /*********************************************************************/
 /* own header files */
-#include "bhy2_pdr.h"
+#include "bhy2_pdr.hpp"
 
 void bhy2_pdr_parse_frame(const uint8_t *data, struct bhy2_pdr_frame *pdr_frame)
 {

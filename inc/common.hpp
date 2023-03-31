@@ -40,11 +40,11 @@
 
 #include <stdbool.h>
 
-#include "../driver/bhy2.h"
-#include "../driver/bhy2_klio.h"
-#include "../driver/bhy2_pdr.h"
-#include "../driver/bhy2_swim.h"
-#include "../driver/bhy2_bsec.h"
+#include "../driver/bhy2.hpp"
+#include "../driver/bhy2_klio.hpp"
+#include "../driver/bhy2_pdr.hpp"
+#include "../driver/bhy2_swim.hpp"
+#include "../driver/bhy2_bsec.hpp"
 
 #define BHY260_APP20_CS_PIN     COINES_SHUTTLE_PIN_7
 #define BHY260_APP20_INT_PIN    COINES_SHUTTLE_PIN_21
