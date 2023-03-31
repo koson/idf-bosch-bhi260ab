@@ -12,7 +12,8 @@
 #ifdef UPLOAD_FIRMWARE_TO_FLASH
 #include "bhi260ap/BHI260AP_BMM150-flash.fw.hpp"
 #else
-#include "BHI260AP_BMM150.fw.hpp"
+// #include "BHI260AP_BMM150.fw.hpp"
+#include "PRO100_BHI260_aux_BMM150.fw.hpp"
 #endif
 
 #define WORK_BUFFER_SIZE 2048
@@ -193,10 +194,12 @@ namespace Motion
         temp_rslt = bhy2_get_error_value(&sensor_error, &bhy2Device);
         if (sensor_error)
         {
-            printf("%s\r\n", get_sensor_error_text(sensor_error));
+            printf("1. %s\r\n", get_sensor_error_text(sensor_error));
         }
 
+        printf("2");
         print_api_error(rslt);
+        printf("3");
         print_api_error(temp_rslt);
 
 #ifdef UPLOAD_FIRMWARE_TO_FLASH
