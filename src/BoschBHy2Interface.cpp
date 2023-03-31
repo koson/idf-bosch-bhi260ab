@@ -56,6 +56,7 @@ namespace Motion
         uint8_t dev_addr = *(uint8_t *)intf_ptr;
         try
         {
+            ESP_LOGI("BHy2", "writing %lu", len);
             vector<uint8_t> data;
             data.push_back(reg_addr);
             for (int i = 0; i < len; i++)
@@ -200,7 +201,7 @@ namespace Motion
         print_api_error(rslt);
         print_api_error(temp_rslt);
         printf("firmware loaded.\r\n");
-        
+
 #ifdef UPLOAD_FIRMWARE_TO_FLASH
         printf("Booting from FLASH.\r\n");
         rslt = bhy2_boot_from_flash(&bhy2Device);
