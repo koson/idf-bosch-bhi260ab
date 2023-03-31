@@ -9,8 +9,9 @@
 #include "../driver/bhy2.hpp"
 #include "../driver/bhy2_parse.hpp"
 
+#define UPLOAD_FIRMWARE_TO_FLASH
 #ifdef UPLOAD_FIRMWARE_TO_FLASH
-#include "bhi260ap/BHI260AP_BMM150-flash.fw.hpp"
+#include "PRO100_BHI260_aux_BMM150-flash.fw.hpp"
 #else
 // #include "BHI260AP_BMM150.fw.hpp"
 #include "PRO100_BHI260_aux_BMM150.fw.hpp"
@@ -176,14 +177,14 @@ namespace Motion
             printf("Flash detected. Erasing flash to upload firmware\r\n");
 
             rslt = bhy2_erase_flash(start_addr, end_addr, &bhy2Device);
-            print_api_error(rslt, &bhy2Device);
+            print_api_error(rslt);
         }
         else
         {
             printf("Flash not detected\r\n");
 
             rslt = BHY2_E_IO;
-            print_api_error(rslt, &bhy2Device);
+            print_api_error(rslt);
         }
 
         printf("Loading firmware into FLASH.\r\n");
