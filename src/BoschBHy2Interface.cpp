@@ -241,6 +241,10 @@ namespace Motion
         io_conf.pull_down_en = GPIO_PULLDOWN_DISABLE;
         io_conf.pull_up_en = GPIO_PULLUP_DISABLE;
         gpio_config(&io_conf);
+        gpio_set_level(GPIO_NUM_35, 0);
+
+        vTaskDelay(pdMS_TO_TICKS(10));
+
         gpio_set_level(GPIO_NUM_35, 1);
     }
 
@@ -253,6 +257,9 @@ namespace Motion
         uint8_t work_buffer[WORK_BUFFER_SIZE];
         uint8_t hintr_ctrl, hif_ctrl, boot_status;
 
+        configReset();
+        configItr();
+
         int8_t rslt = bhy2_init(BHY2_I2C_INTERFACE, boschI2cRead, boschI2cWrite, boschDelayUs, BHY2_RD_WR_LEN, NULL, &bhy2Device);
         print_api_error(rslt);
 
@@ -264,8 +271,7 @@ namespace Motion
         ESP_LOGI("BHy2", "BHI260AP found. Product ID read %X", product_id);
 
         /* Check the interrupt pin and FIFO configurations. Disable status and debug */
-        configItr();
-        configReset();
+
         hintr_ctrl = BHY2_ICTL_DISABLE_STATUS_FIFO | BHY2_ICTL_DISABLE_DEBUG;
 
         rslt = bhy2_set_host_interrupt_ctrl(hintr_ctrl, &bhy2Device);
