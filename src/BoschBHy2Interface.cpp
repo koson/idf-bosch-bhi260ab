@@ -78,6 +78,7 @@ namespace Motion
         if (rslt != BHY2_OK)
         {
             printf("%s\r\n", get_api_error(rslt));
+            printf("Exiting...");
             exit(0);
         }
     }
@@ -330,6 +331,17 @@ namespace Motion
         rslt = bhy2_set_virt_sensor_cfg(QUAT_SENSOR_ID, sample_rate, report_latency_ms, &bhy2Device);
         print_api_error(rslt);
         printf("Enable %s at %.2fHz.\r\n", get_sensor_name(QUAT_SENSOR_ID), sample_rate);
+
+        while (rslt == BHY2_OK)
+        {
+            vTaskDelay(pdMS_TO_TICKS(100));
+            // if (get_interrupt_status())
+            // {
+                /* Data from the FIFO is read and the relevant callbacks if registered are called */
+                rslt = bhy2_get_and_process_fifo(work_buffer, WORK_BUFFER_SIZE, &bhy2Device);
+                print_api_error(rslt);
+            // }
+        }
         return ESP_OK;
     }
 }
