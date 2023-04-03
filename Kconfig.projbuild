@@ -2,7 +2,7 @@ menu "Bosch BHI260AP Sensor"
     config BHI260AP_ADDRESS
         hex
         prompt "Gyro/Accel BHI260AP Sensor Address"
-        default 0x28
+        default 0x29
     config BMM150_ADDRESS
         hex
         prompt "Air BMM150 Sensor Address"
