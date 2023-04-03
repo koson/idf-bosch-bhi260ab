@@ -299,7 +299,7 @@ namespace Motion
 
         if (boot_status & BHY2_BST_HOST_INTERFACE_READY)
         {
-            upload_firmware(boot_status);
+            // upload_firmware(boot_status);
 
             rslt = bhy2_get_kernel_version(&version, &bhy2Device);
             print_api_error(rslt);
