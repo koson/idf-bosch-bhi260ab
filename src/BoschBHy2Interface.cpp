@@ -15,7 +15,7 @@
 #include "Bosch_APP30_SHUTTLE_BHI260_aux_BMM150-flash.fw.hpp"
 #else
 // #include "BHI260AP_BMM150.fw.hpp"
-#include "Bosch_APP30_SHUTTLE_BHI260_aux_BMM150.fw.hpp"
+#include "PRO100_BHI260_aux_BMM150.fw.hpp"
 #endif
 
 #define WORK_BUFFER_SIZE 2048
