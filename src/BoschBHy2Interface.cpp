@@ -35,12 +35,11 @@ namespace Motion
 
     int8_t boschI2cRead(uint8_t reg_addr, uint8_t *reg_data, uint32_t len, void *intf_ptr)
     {
-        uint8_t dev_addr = *(uint8_t *)intf_ptr;
+        (void)intf_ptr;
         try
         {
-            ESP_LOGI("BHy2", "reading %lu", len);
-            _bmi260Sensor->getBus()->syncWrite(I2CAddress(dev_addr), {reg_addr});
-            vector<uint8_t> data = _bmi260Sensor->getBus()->syncRead(I2CAddress(dev_addr), len);
+            _bmi260Sensor->getBus()->syncWrite(I2CAddress(CONFIG_BHI260AB_ADDRESS), {reg_addr});
+            vector<uint8_t> data = _bmi260Sensor->getBus()->syncRead(I2CAddress(CONFIG_BHI260AB_ADDRESS), len);
             memcpy(reg_data, data.data(), len);
             return ESP_OK;
         }
@@ -54,17 +53,16 @@ namespace Motion
 
     int8_t boschI2cWrite(uint8_t reg_addr, const uint8_t *reg_data, uint32_t len, void *intf_ptr)
     {
-        uint8_t dev_addr = *(uint8_t *)intf_ptr;
+        (void)intf_ptr;
         try
         {
-            ESP_LOGI("BHy2", "writing %lu", len);
             vector<uint8_t> data;
             data.push_back(reg_addr);
             for (int i = 0; i < len; i++)
             {
                 data.push_back(reg_data[i]);
             }
-            _bmi260Sensor->getBus()->syncWrite(I2CAddress(dev_addr), data);
+            _bmi260Sensor->getBus()->syncWrite(I2CAddress(CONFIG_BHI260AB_ADDRESS), data);
             return ESP_OK;
         }
         catch (const I2CException &e)
@@ -259,8 +257,7 @@ namespace Motion
         uint8_t work_buffer[WORK_BUFFER_SIZE];
         uint8_t hintr_ctrl, hif_ctrl, boot_status;
 
-        static uint8_t dev_addr{CONFIG_BHI260AB_ADDRESS};
-        int8_t rslt = bhy2_init(BHY2_I2C_INTERFACE, boschI2cRead, boschI2cWrite, boschDelayUs, BHY2_RD_WR_LEN, &dev_addr, &bhy2Device);
+        int8_t rslt = bhy2_init(BHY2_I2C_INTERFACE, boschI2cRead, boschI2cWrite, boschDelayUs, BHY2_RD_WR_LEN, NULL, &bhy2Device);
         print_api_error(rslt);
 
         rslt = bhy2_soft_reset(&bhy2Device);
@@ -268,7 +265,7 @@ namespace Motion
 
         rslt = bhy2_get_product_id(&product_id, &bhy2Device);
         print_api_error(rslt);
-        ESP_LOGD("BHy2", "BHI260AB found. Product ID read %X", product_id);
+        ESP_LOGI("BHy2", "BHI260AB found. Product ID read %X", product_id);
 
         /* Check the interrupt pin and FIFO configurations. Disable status and debug */
         hintr_ctrl = BHY2_ICTL_DISABLE_STATUS_FIFO | BHY2_ICTL_DISABLE_DEBUG;
