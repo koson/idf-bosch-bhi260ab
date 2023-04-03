@@ -3,8 +3,8 @@
 
 namespace Motion
 {
-    esp_err_t BHI260APSensor::init()
+    esp_err_t BHI260APSensor::init(bhy2_fifo_parse_callback_t callback)
     {
-        return initBHy2(this);
+        return initBHy2(this, callback);
     }
 }

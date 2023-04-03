@@ -1,5 +1,6 @@
 #pragma once
 #include "I2C.hpp"
+#include "../driver/bhy2_defs.hpp"
 
 using namespace std;
 using namespace Components;
@@ -20,6 +21,6 @@ namespace Motion
         {
             return this->i2cMasterBus;
         }
-        esp_err_t init();
+        esp_err_t init(bhy2_fifo_parse_callback_t callback);
     };
 }

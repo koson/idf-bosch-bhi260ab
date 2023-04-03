@@ -5,6 +5,7 @@
 #include "freertos/task.h"
 #include <esp_log.h>
 #include "I2C.hpp"
+#include "driver/gpio.h"
 #include "common.hpp"
 #include "../driver/bhy2.hpp"
 #include "../driver/bhy2_parse.hpp"
@@ -220,36 +221,30 @@ namespace Motion
         print_api_error(temp_rslt);
     }
 
-    static void parse_quaternion(const struct bhy2_fifo_parse_data_info *callback_info, void *callback_ref)
+    void configItr()
     {
-        (void)callback_ref;
-        struct bhy2_data_quaternion data;
-        uint32_t s, ns;
-        if (callback_info->data_size != 11) /* Check for a valid payload size. Includes sensor ID */
-        {
-            return;
-        }
-
-        bhy2_parse_quaternion(callback_info->data_ptr, &data);
-
-        uint64_t timestamp = *callback_info->time_stamp; /* Store the last timestamp */
-
-        timestamp = timestamp * 15625; /* Timestamp is now in nanoseconds */
-        s = (uint32_t)(timestamp / UINT64_C(1000000000));
-        ns = (uint32_t)(timestamp - (s * UINT64_C(1000000000)));
-
-        printf("SID: %u; T: %lu.%09lu; x: %f, y: %f, z: %f, w: %f; acc: %.2f\r\n",
-               callback_info->sensor_id,
-               s,
-               ns,
-               data.x / 16384.0f,
-               data.y / 16384.0f,
-               data.z / 16384.0f,
-               data.w / 16384.0f,
-               ((data.accuracy * 180.0f) / 16384.0f) / 3.141592653589793f);
+        gpio_config_t io_conf = {};
+        io_conf.intr_type = GPIO_INTR_DISABLE;
+        io_conf.mode = GPIO_MODE_INPUT;
+        io_conf.pin_bit_mask = (1ULL << GPIO_NUM_36);
+        io_conf.pull_down_en = GPIO_PULLDOWN_DISABLE;
+        io_conf.pull_up_en = GPIO_PULLUP_DISABLE;
+        gpio_config(&io_conf);
     }
 
-    esp_err_t initBHy2(Motion::BHI260APSensor *motionSensor)
+    void configReset()
+    {
+        gpio_config_t io_conf = {};
+        io_conf.intr_type = GPIO_INTR_DISABLE;
+        io_conf.mode = GPIO_MODE_OUTPUT;
+        io_conf.pin_bit_mask = (1ULL << GPIO_NUM_35);
+        io_conf.pull_down_en = GPIO_PULLDOWN_DISABLE;
+        io_conf.pull_up_en = GPIO_PULLUP_DISABLE;
+        gpio_config(&io_conf);
+        gpio_set_level(GPIO_NUM_35, 1);
+    }
+
+    esp_err_t initBHy2(Motion::BHI260APSensor *motionSensor, bhy2_fifo_parse_callback_t quaternionCallback)
     {
 
         _bmi260Sensor = motionSensor;
@@ -269,6 +264,8 @@ namespace Motion
         ESP_LOGI("BHy2", "BHI260AP found. Product ID read %X", product_id);
 
         /* Check the interrupt pin and FIFO configurations. Disable status and debug */
+        configItr();
+        configReset();
         hintr_ctrl = BHY2_ICTL_DISABLE_STATUS_FIFO | BHY2_ICTL_DISABLE_DEBUG;
 
         rslt = bhy2_set_host_interrupt_ctrl(hintr_ctrl, &bhy2Device);
@@ -310,7 +307,7 @@ namespace Motion
             print_api_error(rslt);
             rslt = bhy2_register_fifo_parse_callback(BHY2_SYS_ID_META_EVENT_WU, parse_meta_event, NULL, &bhy2Device);
             print_api_error(rslt);
-            rslt = bhy2_register_fifo_parse_callback(QUAT_SENSOR_ID, parse_quaternion, NULL, &bhy2Device);
+            rslt = bhy2_register_fifo_parse_callback(QUAT_SENSOR_ID, quaternionCallback, NULL, &bhy2Device);
             print_api_error(rslt);
 
             rslt = bhy2_get_and_process_fifo(work_buffer, WORK_BUFFER_SIZE, &bhy2Device);
@@ -326,7 +323,7 @@ namespace Motion
         rslt = bhy2_update_virtual_sensor_list(&bhy2Device);
         print_api_error(rslt);
 
-        float sample_rate = 10.0;      /* Read out data measured at 100Hz */
+        float sample_rate = 10.0;       /* Read out data measured at 100Hz */
         uint32_t report_latency_ms = 0; /* Report immediately */
         rslt = bhy2_set_virt_sensor_cfg(QUAT_SENSOR_ID, sample_rate, report_latency_ms, &bhy2Device);
         print_api_error(rslt);
@@ -335,12 +332,12 @@ namespace Motion
         while (rslt == BHY2_OK)
         {
             vTaskDelay(pdMS_TO_TICKS(100));
-            // if (get_interrupt_status())
-            // {
+            if (gpio_get_level(GPIO_NUM_36))
+            {
                 /* Data from the FIFO is read and the relevant callbacks if registered are called */
                 rslt = bhy2_get_and_process_fifo(work_buffer, WORK_BUFFER_SIZE, &bhy2Device);
                 print_api_error(rslt);
-            // }
+            }
         }
         return ESP_OK;
     }
