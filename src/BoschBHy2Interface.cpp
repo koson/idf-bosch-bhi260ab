@@ -326,7 +326,7 @@ namespace Motion
         rslt = bhy2_update_virtual_sensor_list(&bhy2Device);
         print_api_error(rslt);
 
-        float sample_rate = 100.0;      /* Read out data measured at 100Hz */
+        float sample_rate = 10.0;      /* Read out data measured at 100Hz */
         uint32_t report_latency_ms = 0; /* Report immediately */
         rslt = bhy2_set_virt_sensor_cfg(QUAT_SENSOR_ID, sample_rate, report_latency_ms, &bhy2Device);
         print_api_error(rslt);
