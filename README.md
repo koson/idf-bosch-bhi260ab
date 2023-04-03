@@ -1,1 +1,1 @@
-# idf-bosch-bhi260ab
+# idf-bosch-bhi260ap

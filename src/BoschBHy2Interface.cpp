@@ -1,6 +1,6 @@
 
 #include "BoschBHy2Interface.hpp"
-#include "BHI260ABSensor.hpp"
+#include "BHI260APSensor.hpp"
 #include "freertos/Freertos.h"
 #include "freertos/task.h"
 #include <esp_log.h>
@@ -25,7 +25,7 @@ using namespace std;
 
 namespace Motion
 {
-    BHI260ABSensor *_bmi260Sensor;
+    BHI260APSensor *_bmi260Sensor;
     struct bhy2_dev bhy2Device;
 
     void boschDelayUs(uint32_t period, void *intf_ptr)
@@ -38,8 +38,8 @@ namespace Motion
         (void)intf_ptr;
         try
         {
-            _bmi260Sensor->getBus()->syncWrite(I2CAddress(CONFIG_BHI260AB_ADDRESS), {reg_addr});
-            vector<uint8_t> data = _bmi260Sensor->getBus()->syncRead(I2CAddress(CONFIG_BHI260AB_ADDRESS), len);
+            _bmi260Sensor->getBus()->syncWrite(I2CAddress(CONFIG_BHI260AP_ADDRESS), {reg_addr});
+            vector<uint8_t> data = _bmi260Sensor->getBus()->syncRead(I2CAddress(CONFIG_BHI260AP_ADDRESS), len);
             memcpy(reg_data, data.data(), len);
             return ESP_OK;
         }
@@ -62,7 +62,7 @@ namespace Motion
             {
                 data.push_back(reg_data[i]);
             }
-            _bmi260Sensor->getBus()->syncWrite(I2CAddress(CONFIG_BHI260AB_ADDRESS), data);
+            _bmi260Sensor->getBus()->syncWrite(I2CAddress(CONFIG_BHI260AP_ADDRESS), data);
             return ESP_OK;
         }
         catch (const I2CException &e)
@@ -248,7 +248,7 @@ namespace Motion
                ((data.accuracy * 180.0f) / 16384.0f) / 3.141592653589793f);
     }
 
-    esp_err_t initBHy2(Motion::BHI260ABSensor *motionSensor)
+    esp_err_t initBHy2(Motion::BHI260APSensor *motionSensor)
     {
 
         _bmi260Sensor = motionSensor;
@@ -265,7 +265,7 @@ namespace Motion
 
         rslt = bhy2_get_product_id(&product_id, &bhy2Device);
         print_api_error(rslt);
-        ESP_LOGI("BHy2", "BHI260AB found. Product ID read %X", product_id);
+        ESP_LOGI("BHy2", "BHI260AP found. Product ID read %X", product_id);
 
         /* Check the interrupt pin and FIFO configurations. Disable status and debug */
         hintr_ctrl = BHY2_ICTL_DISABLE_STATUS_FIFO | BHY2_ICTL_DISABLE_DEBUG;

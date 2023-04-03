@@ -6,13 +6,13 @@ using namespace Components;
 
 namespace Motion
 {
-    class BHI260ABSensor
+    class BHI260APSensor
     {
     private:
         shared_ptr<I2CMaster> i2cMasterBus;
 
     public:
-        BHI260ABSensor(shared_ptr<I2CMaster> i2cMasterBus)
+        BHI260APSensor(shared_ptr<I2CMaster> i2cMasterBus)
         {
             this->i2cMasterBus = i2cMasterBus;
         }

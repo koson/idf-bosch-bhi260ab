@@ -1,6 +1,6 @@
-menu "Bosch BHI260AB Sensor"
-    config BHI260AB_ADDRESS
+menu "Bosch BHI260AP Sensor"
+    config BHI260AP_ADDRESS
         hex
-        prompt "Gyro/Accel BHI260AB Sensor Address"
+        prompt "Gyro/Accel BHI260AP Sensor Address"
         default 0x29
 endmenu

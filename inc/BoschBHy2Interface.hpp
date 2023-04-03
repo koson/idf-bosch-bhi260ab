@@ -1,8 +1,8 @@
 #pragma once
-#include "BHI260ABSensor.hpp"
+#include "BHI260APSensor.hpp"
 using namespace std;
 
 namespace Motion
 {
-    esp_err_t initBHy2(BHI260ABSensor *motionSensor);
+    esp_err_t initBHy2(BHI260APSensor *motionSensor);
 }
