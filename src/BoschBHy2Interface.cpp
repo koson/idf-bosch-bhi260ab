@@ -22,7 +22,12 @@
 
 #define QUAT_SENSOR_ID BHY2_SENSOR_ID_RV
 #define EULER_SENSOR_ID BHY2_SENSOR_ID_ORI_WU
+
+#ifdef EULER
 #define SENSOR_ID EULER_SENSOR_ID
+#else
+#define SENSOR_ID QUAT_SENSOR_ID
+#endif
 
 using namespace std;
 
@@ -92,7 +97,9 @@ namespace Motion
         uint8_t meta_event_type = callback_info->data_ptr[0];
         uint8_t byte1 = callback_info->data_ptr[1];
         uint8_t byte2 = callback_info->data_ptr[2];
-        uint8_t *accuracy = (uint8_t*)callback_ref;
+#ifdef EULER
+        uint8_t *accuracy = (uint8_t *)callback_ref;
+#endif
         char *event_text;
 
         if (callback_info->sensor_id == BHY2_SYS_ID_META_EVENT)
@@ -124,11 +131,12 @@ namespace Motion
             break;
         case BHY2_META_EVENT_SENSOR_STATUS:
             printf("%s Accuracy for sensor id %u changed to %u\r\n", event_text, byte1, byte2);
+#ifdef EULER
             if (accuracy)
             {
                 *accuracy = byte2;
             }
-
+#endif
             break;
         case BHY2_META_EVENT_BSX_DO_STEPS_MAIN:
             printf("%s BSX event (do steps main)\r\n", event_text);
@@ -256,7 +264,7 @@ namespace Motion
         gpio_set_level(GPIO_NUM_35, 1);
     }
 
-    esp_err_t initBHy2(Motion::BHI260APSensor *motionSensor, bhy2_fifo_parse_callback_t quaternionCallback)
+    esp_err_t initBHy2(Motion::BHI260APSensor *motionSensor, bhy2_fifo_parse_callback_t dataCallback)
     {
 
         _bmi260Sensor = motionSensor;
@@ -264,8 +272,9 @@ namespace Motion
         uint16_t version = 0;
         uint8_t work_buffer[WORK_BUFFER_SIZE];
         uint8_t hintr_ctrl, hif_ctrl, boot_status;
+#ifdef EULER
         uint8_t accuracy;
-
+#endif
         configReset();
         configItr();
 
@@ -318,11 +327,19 @@ namespace Motion
                 printf("Boot successful. Kernel version %u.\r\n", version);
             }
 
-            rslt = bhy2_register_fifo_parse_callback(BHY2_SYS_ID_META_EVENT, parse_meta_event, (void*)&accuracy, &bhy2Device);
+#ifdef EULER
+            rslt = bhy2_register_fifo_parse_callback(BHY2_SYS_ID_META_EVENT, parse_meta_event, (void *)&accuracy, &bhy2Device);
             print_api_error(rslt);
-            rslt = bhy2_register_fifo_parse_callback(BHY2_SYS_ID_META_EVENT_WU, parse_meta_event, (void*)&accuracy, &bhy2Device);
+            rslt = bhy2_register_fifo_parse_callback(BHY2_SYS_ID_META_EVENT_WU, parse_meta_event, (void *)&accuracy, &bhy2Device);
             print_api_error(rslt);
-            rslt = bhy2_register_fifo_parse_callback(SENSOR_ID, quaternionCallback, (void*)&accuracy, &bhy2Device);
+            rslt = bhy2_register_fifo_parse_callback(SENSOR_ID, quaternionCallback, (void *)&accuracy, &bhy2Device);
+#else
+            rslt = bhy2_register_fifo_parse_callback(BHY2_SYS_ID_META_EVENT, parse_meta_event, null, &bhy2Device);
+            print_api_error(rslt);
+            rslt = bhy2_register_fifo_parse_callback(BHY2_SYS_ID_META_EVENT_WU, parse_meta_event, null, &bhy2Device);
+            print_api_error(rslt);
+            rslt = bhy2_register_fifo_parse_callback(SENSOR_ID, dataCallback, null, &bhy2Device);
+#endif
             print_api_error(rslt);
 
             rslt = bhy2_get_and_process_fifo(work_buffer, WORK_BUFFER_SIZE, &bhy2Device);
