@@ -22,6 +22,7 @@
 
 #define QUAT_SENSOR_ID BHY2_SENSOR_ID_RV
 #define EULER_SENSOR_ID   BHY2_SENSOR_ID_ORI_WU
+#define SENSOR_ID   EULER_SENSOR_ID
 
 using namespace std;
 
@@ -314,7 +315,7 @@ namespace Motion
             print_api_error(rslt);
             rslt = bhy2_register_fifo_parse_callback(BHY2_SYS_ID_META_EVENT_WU, parse_meta_event, NULL, &bhy2Device);
             print_api_error(rslt);
-            rslt = bhy2_register_fifo_parse_callback(EULER_SENSOR_ID, quaternionCallback, NULL, &bhy2Device);
+            rslt = bhy2_register_fifo_parse_callback(SENSOR_ID, quaternionCallback, NULL, &bhy2Device);
             print_api_error(rslt);
 
             rslt = bhy2_get_and_process_fifo(work_buffer, WORK_BUFFER_SIZE, &bhy2Device);
@@ -332,9 +333,9 @@ namespace Motion
 
         float sample_rate = 10.0;       /* Read out data measured at 100Hz */
         uint32_t report_latency_ms = 0; /* Report immediately */
-        rslt = bhy2_set_virt_sensor_cfg(QUAT_SENSOR_ID, sample_rate, report_latency_ms, &bhy2Device);
+        rslt = bhy2_set_virt_sensor_cfg(SENSOR_ID, sample_rate, report_latency_ms, &bhy2Device);
         print_api_error(rslt);
-        printf("Enable %s at %.2fHz.\r\n", get_sensor_name(QUAT_SENSOR_ID), sample_rate);
+        printf("Enable %s at %.2fHz.\r\n", get_sensor_name(SENSOR_ID), sample_rate);
 
         while (rslt == BHY2_OK)
         {
