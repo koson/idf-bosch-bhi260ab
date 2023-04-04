@@ -21,6 +21,7 @@
 #define WORK_BUFFER_SIZE 2048
 
 #define QUAT_SENSOR_ID BHY2_SENSOR_ID_RV
+#define EULER_SENSOR_ID   BHY2_SENSOR_ID_ORI_WU
 
 using namespace std;
 
@@ -313,7 +314,7 @@ namespace Motion
             print_api_error(rslt);
             rslt = bhy2_register_fifo_parse_callback(BHY2_SYS_ID_META_EVENT_WU, parse_meta_event, NULL, &bhy2Device);
             print_api_error(rslt);
-            rslt = bhy2_register_fifo_parse_callback(QUAT_SENSOR_ID, quaternionCallback, NULL, &bhy2Device);
+            rslt = bhy2_register_fifo_parse_callback(EULER_SENSOR_ID, quaternionCallback, NULL, &bhy2Device);
             print_api_error(rslt);
 
             rslt = bhy2_get_and_process_fifo(work_buffer, WORK_BUFFER_SIZE, &bhy2Device);
