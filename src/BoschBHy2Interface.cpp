@@ -333,7 +333,7 @@ namespace Motion
             print_api_error(rslt);
             rslt = bhy2_register_fifo_parse_callback(BHY2_SYS_ID_META_EVENT_WU, parse_meta_event, (void *)&accuracy, &bhy2Device);
             print_api_error(rslt);
-            rslt = bhy2_register_fifo_parse_callback(SENSOR_ID, quaternionCallback, (void *)&accuracy, &bhy2Device);
+            rslt = bhy2_register_fifo_parse_callback(SENSOR_ID, dataCallback, (void *)&accuracy, &bhy2Device);
 #else
             rslt = bhy2_register_fifo_parse_callback(BHY2_SYS_ID_META_EVENT, parse_meta_event, NULL, &bhy2Device);
             print_api_error(rslt);
