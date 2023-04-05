@@ -265,17 +265,14 @@ namespace Motion
         gpio_set_level(GPIO_NUM_35, 1);
     }
 
-    esp_err_t initBHy2(Motion::BHI260APSensor *motionSensor, bhy2_fifo_parse_callback_t dataCallback)
+    esp_err_t initBHy2(Motion::BHI260APSensor *motionSensor)
     {
 
         _bmi260Sensor = motionSensor;
         uint8_t product_id = 0;
-        uint16_t version = 0;
         uint8_t work_buffer[WORK_BUFFER_SIZE];
         uint8_t hintr_ctrl, hif_ctrl, boot_status;
-#ifdef EULER
-        uint8_t accuracy;
-#endif
+
         configReset();
         configItr();
 
@@ -290,7 +287,6 @@ namespace Motion
         ESP_LOGI("BHy2", "BHI260AP found. Product ID read %X", product_id);
 
         /* Check the interrupt pin and FIFO configurations. Disable status and debug */
-
         hintr_ctrl = BHY2_ICTL_DISABLE_STATUS_FIFO | BHY2_ICTL_DISABLE_DEBUG;
 
         rslt = bhy2_set_host_interrupt_ctrl(hintr_ctrl, &bhy2Device);
@@ -320,38 +316,44 @@ namespace Motion
         if (boot_status & BHY2_BST_HOST_INTERFACE_READY)
         {
             upload_firmware(boot_status);
+            return ESP_OK;
+        }
+        printf("Host interface not ready. Exiting\r\n");
+        return ESP_FAIL;
+    }
 
-            rslt = bhy2_get_kernel_version(&version, &bhy2Device);
-            print_api_error(rslt);
-            if ((rslt == BHY2_OK) && (version != 0))
-            {
-                printf("Boot successful. Kernel version %u.\r\n", version);
-            }
+    esp_err_t startLoop(bhy2_fifo_parse_callback_t dataCallback)
+    {
+        uint16_t version = 0;
+        uint8_t work_buffer[WORK_BUFFER_SIZE];
+#ifdef EULER
+        uint8_t accuracy;
+#endif
+
+        int8_t rslt = bhy2_get_kernel_version(&version, &bhy2Device);
+        print_api_error(rslt);
+        if (rslt == BHY2_OK)
+        {
+            printf("Boot successful. Kernel version %u.\r\n", version);
+        }
 
 #ifdef EULER
-            rslt = bhy2_register_fifo_parse_callback(BHY2_SYS_ID_META_EVENT, parse_meta_event, (void *)&accuracy, &bhy2Device);
-            print_api_error(rslt);
-            rslt = bhy2_register_fifo_parse_callback(BHY2_SYS_ID_META_EVENT_WU, parse_meta_event, (void *)&accuracy, &bhy2Device);
-            print_api_error(rslt);
-            rslt = bhy2_register_fifo_parse_callback(SENSOR_ID, dataCallback, (void *)&accuracy, &bhy2Device);
+        rslt = bhy2_register_fifo_parse_callback(BHY2_SYS_ID_META_EVENT, parse_meta_event, (void *)&accuracy, &bhy2Device);
+        print_api_error(rslt);
+        rslt = bhy2_register_fifo_parse_callback(BHY2_SYS_ID_META_EVENT_WU, parse_meta_event, (void *)&accuracy, &bhy2Device);
+        print_api_error(rslt);
+        rslt = bhy2_register_fifo_parse_callback(SENSOR_ID, dataCallback, (void *)&accuracy, &bhy2Device);
 #else
-            rslt = bhy2_register_fifo_parse_callback(BHY2_SYS_ID_META_EVENT, parse_meta_event, NULL, &bhy2Device);
-            print_api_error(rslt);
-            rslt = bhy2_register_fifo_parse_callback(BHY2_SYS_ID_META_EVENT_WU, parse_meta_event, NULL, &bhy2Device);
-            print_api_error(rslt);
-            rslt = bhy2_register_fifo_parse_callback(SENSOR_ID, dataCallback, NULL, &bhy2Device);
+        rslt = bhy2_register_fifo_parse_callback(BHY2_SYS_ID_META_EVENT, parse_meta_event, NULL, &bhy2Device);
+        print_api_error(rslt);
+        rslt = bhy2_register_fifo_parse_callback(BHY2_SYS_ID_META_EVENT_WU, parse_meta_event, NULL, &bhy2Device);
+        print_api_error(rslt);
+        rslt = bhy2_register_fifo_parse_callback(SENSOR_ID, dataCallback, NULL, &bhy2Device);
 #endif
-            print_api_error(rslt);
+        print_api_error(rslt);
 
-            rslt = bhy2_get_and_process_fifo(work_buffer, WORK_BUFFER_SIZE, &bhy2Device);
-            print_api_error(rslt);
-        }
-        else
-        {
-            printf("Host interface not ready. Exiting\r\n");
-            return ESP_FAIL;
-        }
-
+        rslt = bhy2_get_and_process_fifo(work_buffer, WORK_BUFFER_SIZE, &bhy2Device);
+        print_api_error(rslt);
         /* Update the callback table to enable parsing of sensor data */
         rslt = bhy2_update_virtual_sensor_list(&bhy2Device);
         print_api_error(rslt);
