@@ -270,7 +270,6 @@ namespace Motion
 
         _bmi260Sensor = motionSensor;
         uint8_t product_id = 0;
-        uint8_t work_buffer[WORK_BUFFER_SIZE];
         uint8_t hintr_ctrl, hif_ctrl, boot_status;
 
         configReset();
