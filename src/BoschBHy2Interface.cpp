@@ -86,8 +86,8 @@ namespace Motion
     {
         if (rslt != BHY2_OK)
         {
-            ESP_LOGE("%s", get_api_error(rslt));
-            ESP_LOGE("Exiting...");
+            ESP_LOGE("BHy2", "%s", get_api_error(rslt));
+            ESP_LOGE("BHy2", "Exiting...");
             exit(0);
         }
     }
@@ -119,19 +119,19 @@ namespace Motion
         switch (meta_event_type)
         {
         case BHY2_META_EVENT_FLUSH_COMPLETE:
-            ESP_LOGI("%s Flush complete for sensor id %u", event_text, byte1);
+            ESP_LOGI("BHy2", "%s Flush complete for sensor id %u", event_text, byte1);
             break;
         case BHY2_META_EVENT_SAMPLE_RATE_CHANGED:
-            ESP_LOGI("%s Sample rate changed for sensor id %u", event_text, byte1);
+            ESP_LOGI("BHy2", "%s Sample rate changed for sensor id %u", event_text, byte1);
             break;
         case BHY2_META_EVENT_POWER_MODE_CHANGED:
-            ESP_LOGI("%s Power mode changed for sensor id %u", event_text, byte1);
+            ESP_LOGI("BHy2", "%s Power mode changed for sensor id %u", event_text, byte1);
             break;
         case BHY2_META_EVENT_ALGORITHM_EVENTS:
-            ESP_LOGI("%s Algorithm event", event_text);
+            ESP_LOGI("BHy2", "%s Algorithm event", event_text);
             break;
         case BHY2_META_EVENT_SENSOR_STATUS:
-            ESP_LOGI("%s Accuracy for sensor id %u changed to %u", event_text, byte1, byte2);
+            ESP_LOGI("BHy2", "%s Accuracy for sensor id %u changed to %u", event_text, byte1, byte2);
 #ifdef EULER
             if (accuracy)
             {
@@ -140,42 +140,42 @@ namespace Motion
 #endif
             break;
         case BHY2_META_EVENT_BSX_DO_STEPS_MAIN:
-            ESP_LOGI("%s BSX event (do steps main)\n", event_text);
+            ESP_LOGI("BHy2", "BHy2", "%s BSX event (do steps main)\n", event_text);
             break;
         case BHY2_META_EVENT_BSX_DO_STEPS_CALIB:
-            ESP_LOGI("%s BSX event (do steps calib)\n", event_text);
+            ESP_LOGI("BHy2", "BHy2", "%s BSX event (do steps calib)\n", event_text);
             break;
         case BHY2_META_EVENT_BSX_GET_OUTPUT_SIGNAL:
-            ESP_LOGI("%s BSX event (get output signal)\n", event_text);
+            ESP_LOGI("BHy2", "BHy2", "%s BSX event (get output signal)\n", event_text);
             break;
         case BHY2_META_EVENT_SENSOR_ERROR:
-            ESP_LOGI("%s Sensor id %u reported error 0x%02X", event_text, byte1, byte2);
+            ESP_LOGI("BHy2", "BHy2", "%s Sensor id %u reported error 0x%02X", event_text, byte1, byte2);
             break;
         case BHY2_META_EVENT_FIFO_OVERFLOW:
-            ESP_LOGI("%s FIFO overflow", event_text);
+            ESP_LOGI("BHy2", "%s FIFO overflow", event_text);
             break;
         case BHY2_META_EVENT_DYNAMIC_RANGE_CHANGED:
-            ESP_LOGI("%s Dynamic range changed for sensor id %u", event_text, byte1);
+            ESP_LOGI("BHy2", "%s Dynamic range changed for sensor id %u", event_text, byte1);
             break;
         case BHY2_META_EVENT_FIFO_WATERMARK:
-            ESP_LOGI("%s FIFO watermark reached", event_text);
+            ESP_LOGI("BHy2", "%s FIFO watermark reached", event_text);
             break;
         case BHY2_META_EVENT_INITIALIZED:
-            ESP_LOGI("%s Firmware initialized. Firmware version %u", event_text, ((uint16_t)byte2 << 8) | byte1);
+            ESP_LOGI("BHy2", "%s Firmware initialized. Firmware version %u", event_text, ((uint16_t)byte2 << 8) | byte1);
             break;
         case BHY2_META_TRANSFER_CAUSE:
-            ESP_LOGI("%s Transfer cause for sensor id %u", event_text, byte1);
+            ESP_LOGI("BHy2", "%s Transfer cause for sensor id %u", event_text, byte1);
             break;
         case BHY2_META_EVENT_SENSOR_FRAMEWORK:
-            ESP_LOGI("%s Sensor framework event for sensor id %u", event_text, byte1);
+            ESP_LOGI("BHy2", "%s Sensor framework event for sensor id %u", event_text, byte1);
             break;
         case BHY2_META_EVENT_RESET:
-            ESP_LOGI("%s Reset event", event_text);
+            ESP_LOGI("BHy2", "%s Reset event", event_text);
             break;
         case BHY2_META_EVENT_SPACER:
             break;
         default:
-            ESP_LOGI("%s Unknown meta event with id: %u", meta_event_type);
+            ESP_LOGI("BHy2", "%s Unknown meta event with id: %u", meta_event_type);
             break;
         }
     }
@@ -191,23 +191,23 @@ namespace Motion
         {
             uint32_t start_addr = BHY2_FLASH_SECTOR_START_ADDR;
             uint32_t end_addr = start_addr + sizeof(bhy2_firmware_image);
-            ESP_LOGI("Flash detected. Erasing flash to upload firmware");
+            ESP_LOGI("BHy2", "Flash detected. Erasing flash to upload firmware");
 
             rslt = bhy2_erase_flash(start_addr, end_addr, &bhy2Device);
             print_api_error(rslt);
         }
         else
         {
-            ESP_LOGW("Flash not detected");
+            ESP_LOGW("BHy2", "Flash not detected");
 
             rslt = BHY2_E_IO;
             print_api_error(rslt);
         }
 
-        ESP_LOGI("Loading firmware into FLASH.");
+        ESP_LOGI("BHy2", "Loading firmware into FLASH.");
         rslt = bhy2_upload_firmware_to_flash(bhy2_firmware_image, sizeof(bhy2_firmware_image), &bhy2Device);
 #else
-        ESP_LOGI("Loading firmware into RAM.");
+        ESP_LOGI("BHy2", "Loading firmware into RAM.");
         rslt = bhy2_upload_firmware_to_ram(bhy2_firmware_image, sizeof(bhy2_firmware_image), &bhy2Device);
 #endif
         temp_rslt = bhy2_get_error_value(&sensor_error, &bhy2Device);
@@ -218,13 +218,13 @@ namespace Motion
 
         print_api_error(rslt);
         print_api_error(temp_rslt);
-        ESP_LOGI("firmware loaded.");
+        ESP_LOGI("BHy2", "firmware loaded.");
 
 #ifdef UPLOAD_FIRMWARE_TO_FLASH
-        ESP_LOGI("Booting from FLASH.");
+        ESP_LOGI("BHy2", "Booting from FLASH.");
         rslt = bhy2_boot_from_flash(&bhy2Device);
 #else
-        ESP_LOGI("Booting from RAM.");
+        ESP_LOGI("BHy2", "Booting from RAM.");
         rslt = bhy2_boot_from_ram(&bhy2Device);
 #endif
 
@@ -293,15 +293,15 @@ namespace Motion
         rslt = bhy2_get_host_interrupt_ctrl(&hintr_ctrl, &bhy2Device);
         print_api_error(rslt);
 
-        ESP_LOGI("Host interrupt control");
-        ESP_LOGI("    Wake up FIFO %s.", (hintr_ctrl & BHY2_ICTL_DISABLE_FIFO_W) ? "disabled" : "enabled");
-        ESP_LOGI("    Non wake up FIFO %s.", (hintr_ctrl & BHY2_ICTL_DISABLE_FIFO_NW) ? "disabled" : "enabled");
-        ESP_LOGI("    Status FIFO %s.", (hintr_ctrl & BHY2_ICTL_DISABLE_STATUS_FIFO) ? "disabled" : "enabled");
-        ESP_LOGI("    Debugging %s.", (hintr_ctrl & BHY2_ICTL_DISABLE_DEBUG) ? "disabled" : "enabled");
-        ESP_LOGI("    Fault %s.", (hintr_ctrl & BHY2_ICTL_DISABLE_FAULT) ? "disabled" : "enabled");
-        ESP_LOGI("    Interrupt is %s.", (hintr_ctrl & BHY2_ICTL_ACTIVE_LOW) ? "active low" : "active high");
-        ESP_LOGI("    Interrupt is %s triggered.", (hintr_ctrl & BHY2_ICTL_EDGE) ? "pulse" : "level");
-        ESP_LOGI("    Interrupt pin drive is %s.", (hintr_ctrl & BHY2_ICTL_OPEN_DRAIN) ? "open drain" : "push-pull");
+        ESP_LOGI("BHy2", "Host interrupt control");
+        ESP_LOGI("BHy2", "    Wake up FIFO %s.", (hintr_ctrl & BHY2_ICTL_DISABLE_FIFO_W) ? "disabled" : "enabled");
+        ESP_LOGI("BHy2", "    Non wake up FIFO %s.", (hintr_ctrl & BHY2_ICTL_DISABLE_FIFO_NW) ? "disabled" : "enabled");
+        ESP_LOGI("BHy2", "    Status FIFO %s.", (hintr_ctrl & BHY2_ICTL_DISABLE_STATUS_FIFO) ? "disabled" : "enabled");
+        ESP_LOGI("BHy2", "    Debugging %s.", (hintr_ctrl & BHY2_ICTL_DISABLE_DEBUG) ? "disabled" : "enabled");
+        ESP_LOGI("BHy2", "    Fault %s.", (hintr_ctrl & BHY2_ICTL_DISABLE_FAULT) ? "disabled" : "enabled");
+        ESP_LOGI("BHy2", "    Interrupt is %s.", (hintr_ctrl & BHY2_ICTL_ACTIVE_LOW) ? "active low" : "active high");
+        ESP_LOGI("BHy2", "    Interrupt is %s triggered.", (hintr_ctrl & BHY2_ICTL_EDGE) ? "pulse" : "level");
+        ESP_LOGI("BHy2", "    Interrupt pin drive is %s.", (hintr_ctrl & BHY2_ICTL_OPEN_DRAIN) ? "open drain" : "push-pull");
 
         /* Configure the host interface */
         hif_ctrl = 0;
@@ -317,7 +317,7 @@ namespace Motion
             upload_firmware(boot_status);
             return ESP_OK;
         }
-        ESP_LOGE("Host interface not ready. Exiting");
+        ESP_LOGE("BHy2", "Host interface not ready. Exiting");
         return ESP_FAIL;
     }
 
@@ -333,7 +333,7 @@ namespace Motion
         print_api_error(rslt);
         if (rslt == BHY2_OK)
         {
-            ESP_LOGI("Boot successful. Kernel version %u.", version);
+            ESP_LOGI("BHy2", "Boot successful. Kernel version %u.", version);
         }
 
 #ifdef EULER
@@ -361,7 +361,7 @@ namespace Motion
         uint32_t report_latency_ms = 0; /* Report immediately */
         rslt = bhy2_set_virt_sensor_cfg(SENSOR_ID, sample_rate, report_latency_ms, &bhy2Device);
         print_api_error(rslt);
-        ESP_LOGI("Enable %s at %.2fHz.", get_sensor_name(SENSOR_ID), sample_rate);
+        ESP_LOGI("BHy2", "Enable %s at %.2fHz.", get_sensor_name(SENSOR_ID), sample_rate);
 
         while (rslt == BHY2_OK)
         {
