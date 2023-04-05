@@ -357,7 +357,7 @@ namespace Motion
         rslt = bhy2_update_virtual_sensor_list(&bhy2Device);
         print_api_error(rslt);
 
-        float sample_rate = 50.0;       /* Read out data measured at 100Hz */
+        float sample_rate = 50.0;       /* Read out data measured at 50Hz */
         uint32_t report_latency_ms = 0; /* Report immediately */
         rslt = bhy2_set_virt_sensor_cfg(SENSOR_ID, sample_rate, report_latency_ms, &bhy2Device);
         print_api_error(rslt);
@@ -365,12 +365,13 @@ namespace Motion
 
         while (rslt == BHY2_OK)
         {
-            if (gpio_get_level(GPIO_NUM_36))
-            {
+            vTaskDelay(pdMS_TO_TICKS(100));
+            // if (gpio_get_level(GPIO_NUM_36))
+            // {
                 /* Data from the FIFO is read and the relevant callbacks if registered are called */
                 rslt = bhy2_get_and_process_fifo(work_buffer, WORK_BUFFER_SIZE, &bhy2Device);
                 print_api_error(rslt);
-            }
+            // }
         }
         return ESP_OK;
     }
