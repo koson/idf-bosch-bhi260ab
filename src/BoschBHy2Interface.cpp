@@ -140,13 +140,13 @@ namespace Motion
 #endif
             break;
         case BHY2_META_EVENT_BSX_DO_STEPS_MAIN:
-            ESP_LOGI("BHy2", "%s BSX event (do steps main)\n", event_text);
+            ESP_LOGI("BHy2", "%s BSX event (do steps main)", event_text);
             break;
         case BHY2_META_EVENT_BSX_DO_STEPS_CALIB:
-            ESP_LOGI("BHy2", "%s BSX event (do steps calib)\n", event_text);
+            ESP_LOGI("BHy2", "%s BSX event (do steps calib)", event_text);
             break;
         case BHY2_META_EVENT_BSX_GET_OUTPUT_SIGNAL:
-            ESP_LOGI("BHy2", "%s BSX event (get output signal)\n", event_text);
+            ESP_LOGI("BHy2", "%s BSX event (get output signal)", event_text);
             break;
         case BHY2_META_EVENT_SENSOR_ERROR:
             ESP_LOGI("BHy2", "%s Sensor id %u reported error 0x%02X", event_text, byte1, byte2);
