@@ -140,16 +140,16 @@ namespace Motion
 #endif
             break;
         case BHY2_META_EVENT_BSX_DO_STEPS_MAIN:
-            ESP_LOGI("BHy2", "BHy2", "%s BSX event (do steps main)\n", event_text);
+            ESP_LOGI("BHy2", "%s BSX event (do steps main)\n", event_text);
             break;
         case BHY2_META_EVENT_BSX_DO_STEPS_CALIB:
-            ESP_LOGI("BHy2", "BHy2", "%s BSX event (do steps calib)\n", event_text);
+            ESP_LOGI("BHy2", "%s BSX event (do steps calib)\n", event_text);
             break;
         case BHY2_META_EVENT_BSX_GET_OUTPUT_SIGNAL:
-            ESP_LOGI("BHy2", "BHy2", "%s BSX event (get output signal)\n", event_text);
+            ESP_LOGI("BHy2", "%s BSX event (get output signal)\n", event_text);
             break;
         case BHY2_META_EVENT_SENSOR_ERROR:
-            ESP_LOGI("BHy2", "BHy2", "%s Sensor id %u reported error 0x%02X", event_text, byte1, byte2);
+            ESP_LOGI("BHy2", "%s Sensor id %u reported error 0x%02X", event_text, byte1, byte2);
             break;
         case BHY2_META_EVENT_FIFO_OVERFLOW:
             ESP_LOGI("BHy2", "%s FIFO overflow", event_text);
@@ -213,7 +213,7 @@ namespace Motion
         temp_rslt = bhy2_get_error_value(&sensor_error, &bhy2Device);
         if (sensor_error)
         {
-            ESP_LOGE("%s", get_sensor_error_text(sensor_error));
+            ESP_LOGE("BHy2", "%s", get_sensor_error_text(sensor_error));
         }
 
         print_api_error(rslt);
@@ -231,7 +231,7 @@ namespace Motion
         temp_rslt = bhy2_get_error_value(&sensor_error, &bhy2Device);
         if (sensor_error)
         {
-            ESP_LOGE("%s", get_sensor_error_text(sensor_error));
+            ESP_LOGE("BHy2", "%s", get_sensor_error_text(sensor_error));
         }
 
         print_api_error(rslt);
