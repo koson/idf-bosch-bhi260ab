@@ -175,7 +175,7 @@ namespace Motion
         case BHY2_META_EVENT_SPACER:
             break;
         default:
-            ESP_LOGI("BHy2", "%s Unknown meta event with id: %u", meta_event_type);
+            ESP_LOGI("BHy2", "%s Unknown meta event with id: %u", event_text, meta_event_type);
             break;
         }
     }
