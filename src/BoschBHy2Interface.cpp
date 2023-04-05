@@ -365,7 +365,6 @@ namespace Motion
 
         while (rslt == BHY2_OK)
         {
-            vTaskDelay(pdMS_TO_TICKS(100));
             if (gpio_get_level(GPIO_NUM_36))
             {
                 /* Data from the FIFO is read and the relevant callbacks if registered are called */
