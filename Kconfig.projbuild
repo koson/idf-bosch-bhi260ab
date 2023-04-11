@@ -1,19 +1,21 @@
-menu "Bosch BHI260AP Sensor"
-    config BHI260AP_ACTIVE
-        bool "Active"
-        default y
-    config BHI260AP_ADDRESS
-        hex
-        prompt "Gyro/Accel BHI260AP Sensor Address"
-        default 0x28
-        depends on BHI260AP_ACTIVE
-    choice BME260AP_OUTPUT_MODE
-         prompt "Output Mode"
-         default EULER
-         depends on BHI260AP_ACTIVE
-         config EULER
-            bool "EULER"
-         config QUATERNION
-            bool "QUATERNION"
-    endchoice
+menu "CoreX Configuration" 
+    menu "Bosch BHI260AP Sensor"
+        config BHI260AP_ACTIVE
+            bool "Active"
+            default y
+        config BHI260AP_ADDRESS
+            hex
+            prompt "Gyro/Accel BHI260AP Sensor Address"
+            default 0x28
+            depends on BHI260AP_ACTIVE
+        choice BME260AP_OUTPUT_MODE
+            prompt "Output Mode"
+            default EULER
+            depends on BHI260AP_ACTIVE
+            config EULER
+                bool "EULER"
+            config QUATERNION
+                bool "QUATERNION"
+        endchoice
+    endmenu
 endmenu
