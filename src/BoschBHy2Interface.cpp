@@ -217,14 +217,20 @@ namespace Motion
 
         print_api_error(rslt);
         print_api_error(temp_rslt);
+        if (rslt != BHY2_OK)
+            return rslt;
         ESP_LOGI("BHy2", "firmware loaded.");
 
 #ifdef UPLOAD_FIRMWARE_TO_FLASH
         ESP_LOGI("BHy2", "Booting from FLASH.");
         rslt = bhy2_boot_from_flash(&bhy2Device);
+        if (rslt != BHY2_OK)
+            return rslt;
 #else
         ESP_LOGI("BHy2", "Booting from RAM.");
         rslt = bhy2_boot_from_ram(&bhy2Device);
+        if (rslt != BHY2_OK)
+            return rslt;
 #endif
 
         temp_rslt = bhy2_get_error_value(&sensor_error, &bhy2Device);
