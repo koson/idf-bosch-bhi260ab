@@ -278,8 +278,8 @@ namespace Motion
         uint8_t product_id = 0;
         uint8_t hintr_ctrl, hif_ctrl, boot_status;
 
-        configReset();
-        configItr();
+        // configReset();
+        // configItr();
 
         int8_t rslt = bhy2_init(BHY2_I2C_INTERFACE, boschI2cRead, boschI2cWrite, boschDelayUs, BHY2_RD_WR_LEN, NULL, &bhy2Device);
         print_api_error(rslt);
