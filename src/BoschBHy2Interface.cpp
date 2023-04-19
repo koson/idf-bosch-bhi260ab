@@ -88,7 +88,6 @@ namespace Motion
         {
             ESP_LOGE("BHy2", "%s", get_api_error(rslt));
             ESP_LOGE("BHy2", "Exiting...");
-            exit(0);
         }
     }
 
@@ -368,9 +367,9 @@ namespace Motion
             vTaskDelay(pdMS_TO_TICKS(100));
             // if (gpio_get_level(GPIO_NUM_36))
             // {
-                /* Data from the FIFO is read and the relevant callbacks if registered are called */
-                rslt = bhy2_get_and_process_fifo(work_buffer, WORK_BUFFER_SIZE, &bhy2Device);
-                print_api_error(rslt);
+            /* Data from the FIFO is read and the relevant callbacks if registered are called */
+            rslt = bhy2_get_and_process_fifo(work_buffer, WORK_BUFFER_SIZE, &bhy2Device);
+            print_api_error(rslt);
             // }
         }
         return ESP_OK;
