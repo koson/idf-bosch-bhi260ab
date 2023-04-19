@@ -179,7 +179,7 @@ namespace Motion
         }
     }
 
-    static void upload_firmware(uint8_t boot_stat)
+    static uint8_t upload_firmware(uint8_t boot_stat)
     {
         uint8_t sensor_error;
         int8_t temp_rslt;
@@ -235,6 +235,7 @@ namespace Motion
 
         print_api_error(rslt);
         print_api_error(temp_rslt);
+        return rslt;
     }
 
     void configItr()
@@ -313,8 +314,11 @@ namespace Motion
 
         if (boot_status & BHY2_BST_HOST_INTERFACE_READY)
         {
-            upload_firmware(boot_status);
-            return ESP_OK;
+            uint8_t rsl = upload_firmware(boot_status);
+            if (rsl)
+            {
+                return ESP_OK;
+            }
         }
         ESP_LOGE("BHy2", "Host interface not ready. Exiting");
         return ESP_FAIL;
