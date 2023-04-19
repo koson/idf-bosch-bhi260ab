@@ -321,7 +321,7 @@ namespace Motion
         if (boot_status & BHY2_BST_HOST_INTERFACE_READY)
         {
             uint8_t rsl = upload_firmware(boot_status);
-            if (rsl)
+            if (rsl == BHY2_OK)
             {
                 return ESP_OK;
             }
