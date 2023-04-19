@@ -11,6 +11,9 @@ menu "Bosch BHI260AP Sensor"
     config BHI260AP_RESET
         int "Reset Pin"
         default 37
+    config BHI260AP_INTERRUPT
+        int "Interrupt Pin"
+        default 36
     choice BME260AP_OUTPUT_MODE
         prompt "Output Mode"
         default EULER

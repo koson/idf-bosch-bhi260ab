@@ -249,7 +249,7 @@ namespace Motion
         gpio_config_t io_conf = {};
         io_conf.intr_type = GPIO_INTR_DISABLE;
         io_conf.mode = GPIO_MODE_INPUT;
-        io_conf.pin_bit_mask = (1ULL << GPIO_NUM_36);
+        io_conf.pin_bit_mask = (1ULL << CONFIG_BHI260AP_INTERRUPT);
         io_conf.pull_down_en = GPIO_PULLDOWN_DISABLE;
         io_conf.pull_up_en = GPIO_PULLUP_DISABLE;
         gpio_config(&io_conf);
@@ -278,8 +278,8 @@ namespace Motion
         uint8_t product_id = 0;
         uint8_t hintr_ctrl, hif_ctrl, boot_status;
 
-        // configReset();
-        // configItr();
+        configReset();
+        configItr();
 
         int8_t rslt = bhy2_init(BHY2_I2C_INTERFACE, boschI2cRead, boschI2cWrite, boschDelayUs, BHY2_RD_WR_LEN, NULL, &bhy2Device);
         print_api_error(rslt);
