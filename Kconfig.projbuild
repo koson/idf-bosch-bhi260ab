@@ -8,6 +8,9 @@ menu "CoreX Configuration"
             prompt "Gyro/Accel BHI260AP Sensor Address"
             default 0x28
             depends on BHI260AP_ACTIVE
+        config BHI260AP_RESET
+            int "Reset Pin"
+            default 37
         choice BME260AP_OUTPUT_MODE
             prompt "Output Mode"
             default EULER
