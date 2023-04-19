@@ -11,9 +11,11 @@ menu "Bosch BHI260AP Sensor"
     config BHI260AP_RESET
         int "Reset Pin"
         default 37
+        depends on BHI260AP_ACTIVE
     config BHI260AP_INTERRUPT
         int "Interrupt Pin"
         default 36
+        depends on BHI260AP_ACTIVE
     choice BME260AP_OUTPUT_MODE
         prompt "Output Mode"
         default EULER
@@ -22,5 +24,14 @@ menu "Bosch BHI260AP Sensor"
             bool "EULER"
         config QUATERNION
             bool "QUATERNION"
+    endchoice
+    choice BME260AP_FLASH_MODE
+        prompt "Flash Mode"
+        default BME260AP_USE_RAM
+        depends on BHI260AP_ACTIVE
+        config BME260AP_USE_RAM
+            bool "RAM"
+        config BME260AP_USE_FLASH
+            bool "FLASH"
     endchoice
 endmenu

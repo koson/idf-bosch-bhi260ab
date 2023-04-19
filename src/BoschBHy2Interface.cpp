@@ -10,11 +10,9 @@
 #include "../driver/bhy2.hpp"
 #include "../driver/bhy2_parse.hpp"
 
-// #define UPLOAD_FIRMWARE_TO_FLASH
-#ifdef UPLOAD_FIRMWARE_TO_FLASH
+#ifdef CONFIG_BME260AP_USE_FLASH
 #include "Bosch_APP30_SHUTTLE_BHI260_aux_BMM150-flash.fw.hpp"
 #else
-// #include "PRO100_BHI260_aux_BMM150.fw.hpp"
 #include "Bosch_APP30_SHUTTLE_BHI260_aux_BMM150.fw.hpp"
 #endif
 
@@ -185,7 +183,7 @@ namespace Motion
         int8_t temp_rslt;
         int8_t rslt = BHY2_OK;
 
-#ifdef UPLOAD_FIRMWARE_TO_FLASH
+#ifdef CONFIG_BME260AP_USE_FLASH
         if (boot_stat & BHY2_BST_FLASH_DETECTED)
         {
             uint32_t start_addr = BHY2_FLASH_SECTOR_START_ADDR;
@@ -221,17 +219,10 @@ namespace Motion
             return rslt;
         ESP_LOGI("BHy2", "firmware loaded.");
 
-#ifdef UPLOAD_FIRMWARE_TO_FLASH
         ESP_LOGI("BHy2", "Booting from FLASH.");
         rslt = bhy2_boot_from_flash(&bhy2Device);
         if (rslt != BHY2_OK)
             return rslt;
-#else
-        ESP_LOGI("BHy2", "Booting from RAM.");
-        rslt = bhy2_boot_from_ram(&bhy2Device);
-        if (rslt != BHY2_OK)
-            return rslt;
-#endif
 
         temp_rslt = bhy2_get_error_value(&sensor_error, &bhy2Device);
         if (sensor_error)
