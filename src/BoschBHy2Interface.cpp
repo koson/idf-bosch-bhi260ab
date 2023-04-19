@@ -258,11 +258,11 @@ namespace Motion
         io_conf.pull_down_en = GPIO_PULLDOWN_DISABLE;
         io_conf.pull_up_en = GPIO_PULLUP_DISABLE;
         gpio_config(&io_conf);
-        gpio_set_level(CONFIG_BHI260AP_RESET, 0);
+        gpio_set_level((gpio_num_t)CONFIG_BHI260AP_RESET, 0);
 
         vTaskDelay(pdMS_TO_TICKS(10));
 
-        gpio_set_level(CONFIG_BHI260AP_RESET, 1);
+        gpio_set_level((gpio_num_t)CONFIG_BHI260AP_RESET, 1);
     }
 
     esp_err_t initBHy2(Motion::BHI260APSensor *motionSensor)
