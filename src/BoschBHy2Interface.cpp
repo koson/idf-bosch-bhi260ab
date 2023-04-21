@@ -9,7 +9,7 @@
 #include "common.hpp"
 #include "../driver/bhy2.hpp"
 #include "../driver/bhy2_parse.hpp"
-
+#ifdef CONFIG_BHI260AP_ACTIVE
 #ifdef CONFIG_BME260AP_USE_FLASH
 #include "Bosch_APP30_SHUTTLE_BHI260_aux_BMM150-flash.fw.hpp"
 #else
@@ -376,3 +376,4 @@ namespace Motion
         return ESP_OK;
     }
 }
+#endif
