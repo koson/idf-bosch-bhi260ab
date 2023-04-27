@@ -179,6 +179,7 @@ namespace Motion
 
     static uint8_t upload_firmware(uint8_t boot_stat)
     {
+        uint16_t version = 0;
         uint8_t sensor_error;
         int8_t temp_rslt;
         int8_t rslt = BHY2_OK;
@@ -199,39 +200,61 @@ namespace Motion
 
             rslt = BHY2_E_IO;
             print_api_error(rslt);
+            return rslt;
         }
-
-        ESP_LOGI("BHy2", "Loading firmware into FLASH.");
-        rslt = bhy2_upload_firmware_to_flash(bhy2_firmware_image, sizeof(bhy2_firmware_image), &bhy2Device);
-#else
-        ESP_LOGI("BHy2", "Loading firmware into RAM.");
-        rslt = bhy2_upload_firmware_to_ram(bhy2_firmware_image, sizeof(bhy2_firmware_image), &bhy2Device);
 #endif
-        temp_rslt = bhy2_get_error_value(&sensor_error, &bhy2Device);
-        if (sensor_error)
+
+        uint32_t incr = 256; /* Max command packet size */
+        uint32_t len = sizeof(bhy2_firmware_image);
+
+        if ((incr % 4) != 0) /* Round off to higher 4 bytes */
         {
-            ESP_LOGE("BHy2", "%s", get_sensor_error_text(sensor_error));
+            incr = ((incr >> 2) + 1) << 2;
         }
 
-        print_api_error(rslt);
-        print_api_error(temp_rslt);
-        if (rslt != BHY2_OK)
-            return rslt;
-        ESP_LOGI("BHy2", "firmware loaded.");
+        for (uint32_t i = 0; (i < len) && (rslt == BHY2_OK); i += incr)
+        {
+            if (incr > (len - i)) /* If last payload */
+            {
+                incr = len - i;
+                if ((incr % 4) != 0) /* Round off to higher 4 bytes */
+                {
+                    incr = ((incr >> 2) + 1) << 2;
+                }
+            }
 
-        ESP_LOGI("BHy2", "Booting from FLASH.");
+#ifdef CONFIG_BME260AP_USE_FLASH
+            rslt = bhy2_upload_firmware_to_flash_partly(&bhy2_firmware_image[i], i, incr, &bhy2Device);
+#else
+            rslt = bhy2_upload_firmware_to_ram_partly(&bhy2_firmware_image[i], len, i, incr, &bhy2Device);
+#endif
+
+            printf("%.2f%% complete\r", (float)(i + incr) / (float)len * 100.0f);
+        }
+
+        printf("\n");
+
+#ifdef CONFIG_BME260AP_USE_FLASH
+        printf("Booting from Flash.\r\n");
         rslt = bhy2_boot_from_flash(&bhy2Device);
-        if (rslt != BHY2_OK)
-            return rslt;
+#else
+        printf("Booting from RAM.\r\n");
+        rslt = bhy2_boot_from_ram(&bhy2Device);
+#endif
 
         temp_rslt = bhy2_get_error_value(&sensor_error, &bhy2Device);
         if (sensor_error)
         {
-            ESP_LOGE("BHy2", "%s", get_sensor_error_text(sensor_error));
+            printf("%s\r\n", get_sensor_error_text(sensor_error));
         }
 
+        rslt = bhy2_get_kernel_version(&version, &bhy2Device);
         print_api_error(rslt);
-        print_api_error(temp_rslt);
+        if ((rslt == BHY2_OK) && (version != 0))
+        {
+            printf("Boot successful. Kernel version %u.\r\n", version);
+        }
+
         return rslt;
     }
 
