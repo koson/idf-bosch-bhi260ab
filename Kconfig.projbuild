@@ -8,11 +8,11 @@ menu "Bosch BHI260AP Sensor"
         prompt "Gyro/Accel BHI260AP Sensor Address"
         default 0x28
         depends on BHI260AP_ACTIVE
-    config BHI260AP_RESET
+    config PIN_BHI260AP_RESET
         int "Reset Pin"
         default 37
         depends on BHI260AP_ACTIVE
-    config BHI260AP_INTERRUPT
+    config PIN_BHI260AP_INTERRUPT
         int "Interrupt Pin"
         default 36
         depends on BHI260AP_ACTIVE

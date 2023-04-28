@@ -260,29 +260,35 @@ namespace Motion
 
     void configItr()
     {
-        gpio_config_t io_conf = {};
-        io_conf.intr_type = GPIO_INTR_DISABLE;
-        io_conf.mode = GPIO_MODE_INPUT;
-        io_conf.pin_bit_mask = (1ULL << CONFIG_BHI260AP_INTERRUPT);
-        io_conf.pull_down_en = GPIO_PULLDOWN_DISABLE;
-        io_conf.pull_up_en = GPIO_PULLUP_DISABLE;
-        gpio_config(&io_conf);
+        if (CONFIG_PIN_BHI260AP_INTERRUPT > -1)
+        {
+            gpio_config_t io_conf = {};
+            io_conf.intr_type = GPIO_INTR_DISABLE;
+            io_conf.mode = GPIO_MODE_INPUT;
+            io_conf.pin_bit_mask = (1ULL << CONFIG_PIN_BHI260AP_INTERRUPT);
+            io_conf.pull_down_en = GPIO_PULLDOWN_DISABLE;
+            io_conf.pull_up_en = GPIO_PULLUP_DISABLE;
+            gpio_config(&io_conf);
+        }
     }
 
     void configReset()
     {
-        gpio_config_t io_conf = {};
-        io_conf.intr_type = GPIO_INTR_DISABLE;
-        io_conf.mode = GPIO_MODE_OUTPUT;
-        io_conf.pin_bit_mask = (1ULL << CONFIG_BHI260AP_RESET);
-        io_conf.pull_down_en = GPIO_PULLDOWN_DISABLE;
-        io_conf.pull_up_en = GPIO_PULLUP_DISABLE;
-        gpio_config(&io_conf);
-        gpio_set_level((gpio_num_t)CONFIG_BHI260AP_RESET, 0);
+        if (CONFIG_PIN_BHI260AP_RESET > -1)
+        {
+            gpio_config_t io_conf = {};
+            io_conf.intr_type = GPIO_INTR_DISABLE;
+            io_conf.mode = GPIO_MODE_OUTPUT;
+            io_conf.pin_bit_mask = (1ULL << CONFIG_PIN_BHI260AP_RESET);
+            io_conf.pull_down_en = GPIO_PULLDOWN_DISABLE;
+            io_conf.pull_up_en = GPIO_PULLUP_DISABLE;
+            gpio_config(&io_conf);
+            gpio_set_level((gpio_num_t)CONFIG_PIN_BHI260AP_RESET, 0);
 
-        vTaskDelay(pdMS_TO_TICKS(10));
+            vTaskDelay(pdMS_TO_TICKS(10));
 
-        gpio_set_level((gpio_num_t)CONFIG_BHI260AP_RESET, 1);
+            gpio_set_level((gpio_num_t)CONFIG_PIN_BHI260AP_RESET, 1);
+        }
     }
 
     esp_err_t initBHy2(Motion::BHI260APSensor *motionSensor)
@@ -292,8 +298,8 @@ namespace Motion
         uint8_t product_id = 0;
         uint8_t hintr_ctrl, hif_ctrl, boot_status;
 
-        // configReset();
-        // configItr();
+        configReset();
+        configItr();
 
         int8_t rslt = bhy2_init(BHY2_I2C_INTERFACE, boschI2cRead, boschI2cWrite, boschDelayUs, BHY2_RD_WR_LEN, NULL, &bhy2Device);
         print_api_error(rslt);
@@ -389,12 +395,16 @@ namespace Motion
         while (rslt == BHY2_OK)
         {
             vTaskDelay(pdMS_TO_TICKS(100));
-            // if (gpio_get_level(GPIO_NUM_36))
-            // {
-            /* Data from the FIFO is read and the relevant callbacks if registered are called */
-            rslt = bhy2_get_and_process_fifo(work_buffer, WORK_BUFFER_SIZE, &bhy2Device);
+            if (CONFIG_PIN_BHI260AP_INTERRUPT > -1 && gpio_get_level((gpio_num_t)CONFIG_PIN_BHI260AP_INTERRUPT))
+            {
+                /* Data from the FIFO is read and the relevant callbacks if registered are called */
+                rslt = bhy2_get_and_process_fifo(work_buffer, WORK_BUFFER_SIZE, &bhy2Device);
+            }
+            else
+            {
+                rslt = bhy2_get_and_process_fifo(work_buffer, WORK_BUFFER_SIZE, &bhy2Device);
+            }
             print_api_error(rslt);
-            // }
         }
         return ESP_OK;
     }
