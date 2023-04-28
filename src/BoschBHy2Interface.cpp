@@ -260,7 +260,7 @@ namespace Motion
 
     void configItr()
     {
-        if (CONFIG_PIN_BHI260AP_INTERRUPT > -1)
+        if (CONFIG_PIN_BHI260AP_INTERRUPT > GPIO_NUM_NC)
         {
             gpio_config_t io_conf = {};
             io_conf.intr_type = GPIO_INTR_DISABLE;
@@ -274,7 +274,7 @@ namespace Motion
 
     void configReset()
     {
-        if (CONFIG_PIN_BHI260AP_RESET > -1)
+        if (CONFIG_PIN_BHI260AP_RESET > GPIO_NUM_NC)
         {
             gpio_config_t io_conf = {};
             io_conf.intr_type = GPIO_INTR_DISABLE;
