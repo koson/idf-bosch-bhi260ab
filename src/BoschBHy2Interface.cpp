@@ -297,12 +297,11 @@ namespace Motion
         _bmi260Sensor = motionSensor;
         uint8_t product_id = 0;
         uint8_t hintr_ctrl, hif_ctrl, boot_status;
-        int8_t rslt = ESP_OK;
-        uint16_t version{};
+
         configReset();
         configItr();
 
-        rslt = bhy2_init(BHY2_I2C_INTERFACE, boschI2cRead, boschI2cWrite, boschDelayUs, BHY2_RD_WR_LEN, NULL, &bhy2Device);
+        int8_t rslt = bhy2_init(BHY2_I2C_INTERFACE, boschI2cRead, boschI2cWrite, boschDelayUs, BHY2_RD_WR_LEN, NULL, &bhy2Device);
         print_api_error(rslt);
 
         rslt = bhy2_soft_reset(&bhy2Device);
@@ -341,14 +340,10 @@ namespace Motion
 
         if (boot_status & BHY2_BST_HOST_INTERFACE_READY)
         {
-            rslt = bhy2_get_kernel_version(&version, &bhy2Device);
-            if (version == 0)
+            uint8_t rsl = upload_firmware(boot_status);
+            if (rsl == BHY2_OK)
             {
-                uint8_t rsl = upload_firmware(boot_status);
-                if (rsl == BHY2_OK)
-                {
-                    return ESP_OK;
-                }
+                return ESP_OK;
             }
         }
         ESP_LOGE("BHy2", "Host interface not ready. Exiting");
