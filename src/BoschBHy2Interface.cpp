@@ -302,7 +302,7 @@ namespace Motion
         configReset();
         configItr();
 
-        int8_t rslt = bhy2_init(BHY2_I2C_INTERFACE, boschI2cRead, boschI2cWrite, boschDelayUs, BHY2_RD_WR_LEN, NULL, &bhy2Device);
+        rslt = bhy2_init(BHY2_I2C_INTERFACE, boschI2cRead, boschI2cWrite, boschDelayUs, BHY2_RD_WR_LEN, NULL, &bhy2Device);
         print_api_error(rslt);
 
         rslt = bhy2_soft_reset(&bhy2Device);
