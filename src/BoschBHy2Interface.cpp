@@ -297,7 +297,8 @@ namespace Motion
         _bmi260Sensor = motionSensor;
         uint8_t product_id = 0;
         uint8_t hintr_ctrl, hif_ctrl, boot_status;
-
+        int8_t rslt = ESP_OK;
+        uint16_t version{};
         configReset();
         configItr();
 
@@ -340,10 +341,14 @@ namespace Motion
 
         if (boot_status & BHY2_BST_HOST_INTERFACE_READY)
         {
-            uint8_t rsl = upload_firmware(boot_status);
-            if (rsl == BHY2_OK)
+            rslt = bhy2_get_kernel_version(&version, &bhy2Device);
+            if (version == 0)
             {
-                return ESP_OK;
+                uint8_t rsl = upload_firmware(boot_status);
+                if (rsl == BHY2_OK)
+                {
+                    return ESP_OK;
+                }
             }
         }
         ESP_LOGE("BHy2", "Host interface not ready. Exiting");
@@ -395,7 +400,7 @@ namespace Motion
         while (rslt == BHY2_OK)
         {
             vTaskDelay(pdMS_TO_TICKS(100));
-            if (CONFIG_PIN_BHI260AP_INTERRUPT > -1 && gpio_get_level((gpio_num_t)CONFIG_PIN_BHI260AP_INTERRUPT))
+            if (CONFIG_PIN_BHI260AP_INTERRUPT > GPIO_NUM_NC && gpio_get_level((gpio_num_t)CONFIG_PIN_BHI260AP_INTERRUPT))
             {
                 /* Data from the FIFO is read and the relevant callbacks if registered are called */
                 rslt = bhy2_get_and_process_fifo(work_buffer, WORK_BUFFER_SIZE, &bhy2Device);
