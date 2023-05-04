@@ -134,6 +134,21 @@ namespace Motion
             if (accuracy)
             {
                 *accuracy = byte2;
+                if (byte2 >= 1)
+                {
+                    uint8_t calib_prof[512];
+                    uint32_t actual_len = 0;
+                    uint8_t r = bhy2_get_calibration_profile(UINT16_C(0x205), calib_prof, sizeof(calib_prof), &actual_len, &bhy2Device);
+                    if (r == BHY2_OK)
+                    {
+                        nvs_handle handle;
+                        nvs_open("fusion", NVS_READWRITE, &handle);
+                        nvs_set_blob(handle, "mag_cal", calib_prof, actual_len);
+                        nvs_set_u32(handle, "mag_len", actual_len);
+                        nvs_commit(handle);
+                        nvs_close(handle);
+                    }
+                }
             }
 #endif
             break;
@@ -255,7 +270,18 @@ namespace Motion
         {
             printf("Boot successful. Kernel version %u.\r\n", version);
         }
-
+        uint8_t calib_prof[512];
+        uint32_t actual_len = 0;
+        nvs_handle handle;
+        nvs_open("fusion", NVS_READWRITE, &handle);
+        nvs_get_u32(handle, "mag_len", &actual_len);
+        if (actual_len > 0)
+        {
+            nvs_get_blob(handle, "mag_cal", calib_prof, (size_t *)&actual_len);
+            nvs_close(handle);
+            uint8_t r = bhy2_set_calibration_profile(BHY2_PARAM_BSX_CALIB_STATE_MAG, calib_prof, actual_len, &bhy2Device);
+            ESP_LOGI("BHy2", "LOAD CALIBRATION RESULT:%u size:%ld", r, actual_len);
+        }
         return rslt;
     }
 
@@ -395,26 +421,7 @@ namespace Motion
         bool done = false;
         while (rslt == BHY2_OK)
         {
-            if (!done && accuracy >= 1)
-            {
-                uint8_t calib_prof[512];
-                uint32_t actual_len = 0;
-                uint8_t r = bhy2_get_calibration_profile(UINT16_C(0x205), calib_prof, 512, &actual_len, &bhy2Device);
-                if (r != BHY2_OK)
-                {
-                    ESP_LOGE("BHy2", "ERROR %u al %ld", r, actual_len);
-                }
-                else
-                {
-                    nvs_handle handle;
-                    nvs_open("fusion", NVS_READWRITE, &handle);
-                    nvs_set_blob(handle, "mag", calib_prof, actual_len);
-                    nvs_commit(handle);
-                    nvs_close(handle);
-                    ESP_LOGW("BHy2", "DONE %u al %ld", r, actual_len);
-                    done = true;
-                }
-            }
+
             vTaskDelay(pdMS_TO_TICKS(100));
             if (CONFIG_PIN_BHI260AP_INTERRUPT > GPIO_NUM_NC && gpio_get_level((gpio_num_t)CONFIG_PIN_BHI260AP_INTERRUPT))
             {
