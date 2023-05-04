@@ -9,6 +9,7 @@
 #include "common.hpp"
 #include "../driver/bhy2.hpp"
 #include "../driver/bhy2_parse.hpp"
+#include "nvs_flash.h"
 #ifdef CONFIG_BHI260AP_ACTIVE
 #ifdef CONFIG_BME260AP_USE_FLASH
 #include "Bosch_APP30_SHUTTLE_BHI260_aux_BMM150-flash.fw.hpp"
@@ -391,9 +392,29 @@ namespace Motion
         rslt = bhy2_set_virt_sensor_cfg(SENSOR_ID, sample_rate, report_latency_ms, &bhy2Device);
         print_api_error(rslt);
         ESP_LOGI("BHy2", "Enable %s at %.2fHz.", get_sensor_name(SENSOR_ID), sample_rate);
-
+        bool done = false;
         while (rslt == BHY2_OK)
         {
+            if (!done && accuracy >= 1)
+            {
+                uint8_t calib_prof[512];
+                uint32_t actual_len = 0;
+                uint8_t r = bhy2_get_calibration_profile(UINT16_C(0x205), calib_prof, 512, &actual_len, &bhy2Device);
+                if (r != BHY2_OK)
+                {
+                    ESP_LOGE("BHy2", "ERROR %u al %ld", r, actual_len);
+                }
+                else
+                {
+                    nvs_handle handle;
+                    nvs_open("fusion", NVS_READWRITE, &handle);
+                    nvs_set_blob(handle, "mag", calib_prof, actual_len);
+                    nvs_commit(handle);
+                    nvs_close(handle);
+                    ESP_LOGW("BHy2", "DONE %u al %ld", r, actual_len);
+                    done = true;
+                }
+            }
             vTaskDelay(pdMS_TO_TICKS(100));
             if (CONFIG_PIN_BHI260AP_INTERRUPT > GPIO_NUM_NC && gpio_get_level((gpio_num_t)CONFIG_PIN_BHI260AP_INTERRUPT))
             {
