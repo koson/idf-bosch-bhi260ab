@@ -188,7 +188,7 @@ namespace Motion
         }
     }
 
-    static uint8_t upload_firmware(uint8_t boot_stat, const uint8_t *firmware, uint32_t len)
+    static uint8_t upload_firmware(uint8_t boot_stat, FILE *firmware, uint32_t len)
     {
         uint16_t version = 0;
         uint8_t sensor_error;
@@ -312,7 +312,7 @@ namespace Motion
         }
     }
 
-    esp_err_t initBHy2(Motion::BHI260APSensor *motionSensor, const uint8_t *firmware, uint32_t len)
+    esp_err_t initBHy2(Motion::BHI260APSensor *motionSensor, FILE *firmware, uint32_t len)
     {
 
         _bmi260Sensor = motionSensor;
