@@ -188,7 +188,7 @@ namespace Motion
         }
     }
 
-    static uint8_t upload_firmware(uint8_t boot_stat)
+    static uint8_t upload_firmware(uint8_t boot_stat, const uint8_t *firmware, uint32_t len)
     {
         uint16_t version = 0;
         uint8_t sensor_error;
@@ -216,7 +216,6 @@ namespace Motion
 #endif
 
         uint32_t incr = 256; /* Max command packet size */
-        uint32_t len = sizeof(bhy2_firmware_image);
 
         if ((incr % 4) != 0) /* Round off to higher 4 bytes */
         {
@@ -237,7 +236,7 @@ namespace Motion
 #ifdef CONFIG_BME260AP_USE_FLASH
             rslt = bhy2_upload_firmware_to_flash_partly(&bhy2_firmware_image[i], i, incr, &bhy2Device);
 #else
-            rslt = bhy2_upload_firmware_to_ram_partly(&bhy2_firmware_image[i], len, i, incr, &bhy2Device);
+            rslt = bhy2_upload_firmware_to_ram_partly(&firmware[i], len, i, incr, &bhy2Device);
 #endif
 
             printf("%.2f%% complete\r", (float)(i + incr) / (float)len * 100.0f);
@@ -313,7 +312,7 @@ namespace Motion
         }
     }
 
-    esp_err_t initBHy2(Motion::BHI260APSensor *motionSensor)
+    esp_err_t initBHy2(Motion::BHI260APSensor *motionSensor, const uint8_t *firmware, uint32_t len)
     {
 
         _bmi260Sensor = motionSensor;
@@ -362,7 +361,7 @@ namespace Motion
 
         if (boot_status & BHY2_BST_HOST_INTERFACE_READY)
         {
-            uint8_t rsl = upload_firmware(boot_status);
+            uint8_t rsl = upload_firmware(boot_status, firmware, len);
             if (rsl == BHY2_OK)
             {
                 return ESP_OK;
