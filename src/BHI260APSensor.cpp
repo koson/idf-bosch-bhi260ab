@@ -3,7 +3,7 @@
 
 namespace Motion
 {
-    esp_err_t BHI260APSensor::init(const uint8_t *firmware, uint32_t len)
+    esp_err_t BHI260APSensor::init(FILE *firmware, uint32_t len)
     {
         return initBHy2(this, firmware, len);
     }

@@ -188,7 +188,7 @@ namespace Motion
         }
     }
 
-    static uint8_t upload_firmware(uint8_t boot_stat, FILE *firmware, uint32_t len)
+    static uint8_t upload_firmware(uint8_t boot_stat, FILE *file, uint32_t len)
     {
         uint16_t version = 0;
         uint8_t sensor_error;
@@ -214,7 +214,7 @@ namespace Motion
             return rslt;
         }
 #endif
-
+        ESP_LOGI("BHy2", "Start upload firmware");
         uint32_t incr = 256; /* Max command packet size */
 
         if ((incr % 4) != 0) /* Round off to higher 4 bytes */
@@ -236,7 +236,10 @@ namespace Motion
 #ifdef CONFIG_BME260AP_USE_FLASH
             rslt = bhy2_upload_firmware_to_flash_partly(&bhy2_firmware_image[i], i, incr, &bhy2Device);
 #else
-            rslt = bhy2_upload_firmware_to_ram_partly(&firmware[i], len, i, incr, &bhy2Device);
+            uint8_t firmware[incr];
+            ESP_LOGI("BHy2", "inc: %lu", incr);
+            fread(firmware, sizeof(uint8_t), incr, file);
+            // rslt = bhy2_upload_firmware_to_ram_partly(&firmware[i], len, i, incr, &bhy2Device);
 #endif
 
             printf("%.2f%% complete\r", (float)(i + incr) / (float)len * 100.0f);
