@@ -11,11 +11,6 @@
 #include "../driver/bhy2_parse.hpp"
 #include "nvs_flash.h"
 #ifdef CONFIG_BHI260AP_ACTIVE
-#ifdef CONFIG_BME260AP_USE_FLASH
-#include "Bosch_APP30_SHUTTLE_BHI260_aux_BMM150-flash.fw.hpp"
-#else
-#include "Bosch_APP30_SHUTTLE_BHI260_aux_BMM150.fw.hpp"
-#endif
 
 #define WORK_BUFFER_SIZE 2048
 
