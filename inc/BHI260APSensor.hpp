@@ -21,7 +21,7 @@ namespace Motion
         {
             return this->i2cMasterBus;
         }
-        esp_err_t init();
+        esp_err_t init(const uint8_t *firmware, uint32_t len);
         esp_err_t startSensorLoop(bhy2_fifo_parse_callback_t callback);
     };
 }
