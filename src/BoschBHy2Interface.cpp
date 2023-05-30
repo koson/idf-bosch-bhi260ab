@@ -215,6 +215,7 @@ namespace Motion
         }
 #endif
         ESP_LOGI("BHy2", "Start upload firmware");
+
         uint32_t incr = 256; /* Max command packet size */
 
         if ((incr % 4) != 0) /* Round off to higher 4 bytes */
@@ -237,9 +238,8 @@ namespace Motion
             rslt = bhy2_upload_firmware_to_flash_partly(&bhy2_firmware_image[i], i, incr, &bhy2Device);
 #else
             uint8_t firmware[incr];
-            ESP_LOGI("BHy2", "inc: %lu", incr);
-            fread(firmware, sizeof(uint8_t), incr, file);
-            // rslt = bhy2_upload_firmware_to_ram_partly(&firmware[i], len, i, incr, &bhy2Device);
+            size_t read = fread(firmware, sizeof(uint8_t), incr, file);
+            rslt = bhy2_upload_firmware_to_ram_partly(firmware, len, i, incr, &bhy2Device);
 #endif
 
             printf("%.2f%% complete\r", (float)(i + incr) / (float)len * 100.0f);
