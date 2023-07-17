@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2022 Bosch Sensortec GmbH. All rights reserved.
+ * Copyright (c) 2023 Bosch Sensortec GmbH. All rights reserved.
  *
  * BSD-3-Clause
  *
@@ -41,9 +41,12 @@
 #include <stdbool.h>
 
 #include "../driver/bhy2.hpp"
+#include "../driver/bhi3.hpp"
+#include "../driver/bhi3_multi_tap.hpp"
 #include "../driver/bhy2_klio.hpp"
 #include "../driver/bhy2_swim.hpp"
 #include "../driver/bhy2_bsec.hpp"
+#include "../driver/bhy2_head_tracker.hpp"
 
 #define BHY260_APP20_CS_PIN     COINES_SHUTTLE_PIN_7
 #define BHY260_APP20_INT_PIN    COINES_SHUTTLE_PIN_21
@@ -52,7 +55,7 @@
 #define BHY260_APP30_INT_PIN    COINES_MINI_SHUTTLE_PIN_1_6
 #define BHY260_APP30_RESET_PIN  COINES_MINI_SHUTTLE_PIN_2_6
 
-#define BHY2_RD_WR_LEN          256
+#define BHY2_RD_WR_LEN          256    /* MCU maximum read write length */
 
 char *get_api_error(int8_t error_code);
 char *get_sensor_error_text(uint8_t sensor_error);
