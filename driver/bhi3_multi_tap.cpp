@@ -30,7 +30,7 @@
 * IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *
-* @file       bhy2_swim.c
+* @file       bhi3_multi_tap.c
 * @date       2023-03-24
 * @version    v1.6.0
 *
@@ -43,33 +43,28 @@
 #include <stdio.h>
 
 /*********************************************************************/
-/* BHY2 SensorAPI header files */
+/* BHI3 SensorAPI header files */
 /*********************************************************************/
-#include "bhy2.hpp"
+#include "bhi3.hpp"
 
 /*********************************************************************/
 /* own header files */
 /*********************************************************************/
-#include "bhy2_swim.hpp"
+#include "bhi3_multi_tap.hpp"
+
+/*lint -e506, -e778*/
 
 /*!
  * @brief This API writes to the configuration parameter
- * Config parameters are pool length and handedness
  *
- * @param[in] buffer to store swim configuration
+ * @param[in] buffer to store Multi Tap configuration
  * @param[out] dev hub handle.
  *
  * @return rslt execution result.
  */
-int8_t bhy2_swim_set_config(const void *buffer, struct bhy2_dev *dev)
+int8_t bhi3_multi_tap_set_config(const void *buffer, struct bhy2_dev *dev)
 {
     int8_t rslt = BHY2_OK;
-
-    /*! Length of the configuration is 4 bytes */
-    uint32_t length = BHY2_SWIM_DATA_LENGTH;
-
-    /*! Swim Parameter page with offset 0 used for swim configuration*/
-    uint16_t param = BHY2_SWIM_CONFIG_PARAM;
 
     if (dev == NULL)
     {
@@ -77,32 +72,29 @@ int8_t bhy2_swim_set_config(const void *buffer, struct bhy2_dev *dev)
     }
     else
     {
-        /*! Set the swim configuration parameter */
-        rslt = bhy2_set_parameter(param, (uint8_t *)buffer, length, dev);
+        /*! Set the Multi Tap configuration parameter */
+        rslt = bhy2_set_parameter(BHI3_MULTI_TAP_PARAM(BHI3_MULTI_TAP_ENABLE_PARAM),
+                                  (uint8_t*)buffer,
+                                  BHI3_MULTI_TAP_ENABLE_LENGTH,
+                                  dev);
     }
 
     return rslt;
 }
 
 /*!
- * @brief To get the SWIM configuration parameters like swim length and handedness
+ * @brief To get the MULTI-TAP configuration parameters
  *
- * @param[out] buffer to store swim configuration
+ * @param[out] buffer to store Multi Tap configuration
  * @param[in] dev hub handle
  *
  * @return  status code, BHY_HIF_E_SUCCESS in case of success
  *
  */
-int8_t bhy2_swim_get_config(void *buffer, struct bhy2_dev *dev)
+int8_t bhi3_multi_tap_get_config(const void *buffer, struct bhy2_dev *dev)
 {
     int8_t rslt = BHY2_OK;
-
-    /*! Length of the configuration is 4 bytes */
-    uint32_t length = BHY2_SWIM_DATA_LENGTH;
     uint32_t ret_length;
-
-    /*! Swim Parameter page with offset 0 used to store swim configuration*/
-    uint16_t param = BHY2_SWIM_CONFIG_PARAM;
 
     if (dev == NULL)
     {
@@ -110,10 +102,15 @@ int8_t bhy2_swim_get_config(void *buffer, struct bhy2_dev *dev)
     }
     else
     {
-        /*! Get the swim configuration from the parameter page*/
-        rslt = bhy2_get_parameter(param, buffer, length, &ret_length, dev);
+        /*! Get the Multi Tap configuration from the parameter page*/
+        rslt =
+            bhy2_get_parameter(BHI3_MULTI_TAP_PARAM(BHI3_MULTI_TAP_ENABLE_PARAM),
+                               (uint8_t *)buffer,
+                               BHY2_LE24MUL(BHI3_MULTI_TAP_ENABLE_LENGTH),
+                               &ret_length,
+                               dev);
 
-        if ((rslt == BHY2_OK) && (ret_length != BHY2_SWIM_DATA_LENGTH))
+        if (rslt != BHY2_OK)
         {
             /*! Invalid number of parameters readout */
             rslt = BHY2_E_INVALID_EVENT_SIZE;
@@ -124,27 +121,16 @@ int8_t bhy2_swim_get_config(void *buffer, struct bhy2_dev *dev)
 }
 
 /*!
- * @brief To get the SWIM Algorithm version
+ * @brief This API writes to the tap detector configuration parameter
  *
- * @param[out] buffer to store version data
- * @param[in] dev hub handle
+ * @param[in] buffer to store Multi Tap Detector configuration
+ * @param[out] dev hub handle.
  *
- * @return  status code, BHY_HIF_E_SUCCESS in case of success
- *
+ * @return rslt execution result.
  */
-int8_t bhy2_swim_get_version(bhy2_swim_version_t *version, struct bhy2_dev *dev)
+int8_t bhi3_multi_tap_detector_set_config(const void *buffer, struct bhy2_dev *dev)
 {
     int8_t rslt = BHY2_OK;
-
-    /*! Buffer to store the swim version */
-    uint8_t buffer[4];
-
-    /*! Length of the configuration is 4 */
-    uint32_t length = BHY2_SWIM_DATA_LENGTH;
-    uint32_t ret_length;
-
-    /*! Swim Parameter page with offset 1 used to store swim algorithm version*/
-    uint16_t param = BHY2_SWIM_VERSION;
 
     if (dev == NULL)
     {
@@ -152,19 +138,47 @@ int8_t bhy2_swim_get_version(bhy2_swim_version_t *version, struct bhy2_dev *dev)
     }
     else
     {
-        /*! Get the swim version from the parameter page */
-        rslt = bhy2_get_parameter(param, buffer, length, &ret_length, dev);
+        /*! Set the Multi Tap configuration parameter */
+        rslt = bhy2_set_parameter(BHI3_MULTI_TAP_PARAM(BHI3_MULTI_TAP_DETECTOR_CONFIG_PARAM),
+                                  (uint8_t*)buffer,
+                                  BHI3_MULTI_TAP_DETECTOR_CONFIG_LENGTH,
+                                  dev);
+    }
 
-        if ((rslt == BHY2_OK) && (ret_length != BHY2_SWIM_DATA_LENGTH))
+    return rslt;
+}
+
+/*!
+ * @brief To get the MULTI-TAP Detector configuration parameters
+ *
+ * @param[out] buffer to store Multi Tap Detector configuration
+ * @param[in] dev hub handle
+ *
+ * @return  status code, BHY_HIF_E_SUCCESS in case of success
+ *
+ */
+int8_t bhi3_multi_tap_detector_get_config(const void *buffer, struct bhy2_dev *dev)
+{
+    int8_t rslt = BHY2_OK;
+    uint32_t ret_length;
+
+    if (dev == NULL)
+    {
+        rslt = BHY2_E_NULL_PTR;
+    }
+    else
+    {
+        /*! Get the Multi Tap configuration from the parameter page*/
+        rslt = bhy2_get_parameter(BHI3_MULTI_TAP_PARAM(BHI3_MULTI_TAP_DETECTOR_CONFIG_PARAM),
+                                  (uint8_t *)buffer,
+                                  BHY2_LE24MUL(BHI3_MULTI_TAP_DETECTOR_CONFIG_LENGTH),
+                                  &ret_length,
+                                  dev);
+
+        if (rslt != BHY2_OK)
         {
             /*! Invalid number of parameters readout */
             rslt = BHY2_E_INVALID_EVENT_SIZE;
-        }
-        else
-        {
-            version->improvement = buffer[0];
-            version->platform = buffer[1];
-            version->bugfix = buffer[2];
         }
     }
 
@@ -172,15 +186,15 @@ int8_t bhy2_swim_get_version(bhy2_swim_version_t *version, struct bhy2_dev *dev)
 }
 
 /*!
- * @brief Parsing the fifo data to SWIM output structure format
+ * @brief Parsing the fifo data to Multi Tap output format
  *
- * @param[in] Swim data
- * @param[out] bhy2_swim_aglo_output to store parameter data
+ * @param[in] Multi Tap data
+ * @param[out] buffer to store parameter data
  *
  * @return  API error codes
  *
  */
-int8_t bhy2_swim_parse_data(const uint8_t *data, struct bhy2_swim_algo_output* output)
+int8_t bhi3_multi_tap_parse_data(const uint8_t *data, uint8_t* output)
 {
     int8_t rslt = BHY2_OK;
 
@@ -190,13 +204,7 @@ int8_t bhy2_swim_parse_data(const uint8_t *data, struct bhy2_swim_algo_output* o
     }
     else
     {
-        output->total_distance = BHY2_LE2U16(data);
-        output->length_count = BHY2_LE2U16(data + 2);
-        output->lengths_freestyle = BHY2_LE2U16(data + 4);
-        output->lengths_breaststroke = BHY2_LE2U16(data + 6);
-        output->lengths_butterfly = BHY2_LE2U16(data + 8);
-        output->lengths_backstroke = BHY2_LE2U16(data + 10);
-        output->stroke_count = BHY2_LE2U16(data + 12);
+        *output = *data;
     }
 
     return rslt;

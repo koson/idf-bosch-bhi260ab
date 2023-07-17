@@ -1,5 +1,5 @@
 /**
-* Copyright (c) 2022 Bosch Sensortec GmbH. All rights reserved.
+* Copyright (c) 2023 Bosch Sensortec GmbH. All rights reserved.
 *
 * BSD-3-Clause
 *
@@ -31,13 +31,18 @@
 * POSSIBILITY OF SUCH DAMAGE.
 *
 * @file       bhy2_swim_defs.h
-* @date       2022-10-17
-* @version    v1.4.1
+* @date       2023-03-24
+* @version    v1.6.0
 *
 */
 
 #ifndef _BHY2_SWIM_DEFS_H_
 #define _BHY2_SWIM_DEFS_H_
+
+/* Start of CPP Guard */
+#ifdef __cplusplus
+extern "C" {
+#endif /*__cplusplus */
 
 #include <stdint.h>
 
@@ -112,5 +117,10 @@ typedef struct bhy2_swim_version
 
 typedef void (*bhy2_swim_algo_callback)(uint32_t seconds, uint32_t nanoseconds,
                                         const struct bhy2_swim_data_parse *callback_info);
+
+/* End of CPP Guard */
+#ifdef __cplusplus
+}
+#endif /*__cplusplus */
 
 #endif /* _BHY2_SWIM_DEFS_H_ */

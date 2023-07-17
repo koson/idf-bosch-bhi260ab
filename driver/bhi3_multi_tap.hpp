@@ -30,14 +30,14 @@
 * IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *
-* @file       bhy2_swim.h
+* @file       bhi3_multi_tap.h
 * @date       2023-03-24
 * @version    v1.6.0
 *
 */
 
-#ifndef _BHY2_SWIM_H_
-#define _BHY2_SWIM_H_
+#ifndef _BHY2_MULTI_TAP_H_
+#define _BHY2_MULTI_TAP_H_
 
 /* Start of CPP Guard */
 #ifdef __cplusplus
@@ -47,22 +47,32 @@ extern "C" {
 #include <stdint.h>
 #include <stdlib.h>
 
-#include "bhy2.hpp"
-#include "bhy2_swim_defs.hpp"
+#include "bhi3.hpp"
+#include "bhi3_multi_tap_defs.hpp"
 
 /*!
- * @brief Parsing the fifo data to SWIM output structure format
+ * @brief Parsing the fifo data to MULTI_TAP output structure format
  *
- * @param[in] data parameter
- * @param[out] bhy2_swim_aglo_output to store parameter data
+ * @param[in] Multi Tap data
+ * @param[out] buffer to store parameter data
  *
  * @return  API error codes
  *
  */
-int8_t bhy2_swim_parse_data(const uint8_t *data, struct bhy2_swim_algo_output *output);
+int8_t bhi3_multi_tap_parse_data(const uint8_t *data, uint8_t *output);
 
 /*!
- * @brief To get the SWIM configuration parameters like swim length and handedness
+ * @brief To set the MULTI_TAP configuration parameters
+ * @param[out] buffer to store parameter data
+ * @param[in] dev hub handle
+ *
+ * @return  status code, BHY_HIF_E_SUCCESS in case of success
+ *
+ */
+int8_t bhi3_multi_tap_set_config(const void *buffer, struct bhy2_dev *dev);
+
+/*!
+ * @brief To get the MULTI_TAP configuration parameters
  *
  * @param[out] buffer to store parameter data
  * @param[in] dev hub handle
@@ -70,32 +80,32 @@ int8_t bhy2_swim_parse_data(const uint8_t *data, struct bhy2_swim_algo_output *o
  * @return  status code, BHY_HIF_E_SUCCESS in case of success
  *
  */
-int8_t bhy2_swim_get_config(void *buffer, struct bhy2_dev *dev);
+int8_t bhi3_multi_tap_get_config(const void *buffer, struct bhy2_dev *dev);
 
 /*!
- * @brief To get the SWIM Algorithm version
- *
- * @param[out] buffer to store version data
- * @param[in] dev hub handle
- *
- * @return  status code, BHY_HIF_E_SUCCESS in case of success
- *
- */
-int8_t bhy2_swim_get_version(bhy2_swim_version_t *buffer, struct bhy2_dev *dev);
-
-/*!
- * @brief To set the SWIM configuration parameters like swim length and handedness
+ * @brief To set the MULTI_TAP Detector configuration parameters
  * @param[out] buffer to store parameter data
  * @param[in] dev hub handle
  *
  * @return  status code, BHY_HIF_E_SUCCESS in case of success
  *
  */
-int8_t bhy2_swim_set_config(const void *buffer, struct bhy2_dev *dev);
+int8_t bhi3_multi_tap_detector_set_config(const void *buffer, struct bhy2_dev *dev);
+
+/*!
+ * @brief To get the MULTI_TAP Detector configuration parameters
+ *
+ * @param[out] buffer to store parameter data
+ * @param[in] dev hub handle
+ *
+ * @return  status code, BHY_HIF_E_SUCCESS in case of success
+ *
+ */
+int8_t bhi3_multi_tap_detector_get_config(const void *buffer, struct bhy2_dev *dev);
 
 /* End of CPP Guard */
 #ifdef __cplusplus
 }
 #endif /*__cplusplus */
 
-#endif /* _BHY2_SWIM_H_ */
+#endif /* _BHY2_MULTI_TAP_H_ */

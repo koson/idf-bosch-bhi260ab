@@ -1,5 +1,5 @@
 /**
-* Copyright (c) 2022 Bosch Sensortec GmbH. All rights reserved.
+* Copyright (c) 2023 Bosch Sensortec GmbH. All rights reserved.
 *
 * BSD-3-Clause
 *
@@ -31,23 +31,24 @@
 * POSSIBILITY OF SUCH DAMAGE.
 *
 * @file       bhy2_klio.h
-* @date       2022-10-17
-* @version    v1.4.1
+* @date       2023-03-24
+* @version    v1.6.0
 *
 */
 
 #ifndef __BHY2_KLIO_H__
 #define __BHY2_KLIO_H__
 
+/* Start of CPP Guard */
+#ifdef __cplusplus
+extern "C" {
+#endif /*__cplusplus */
+
 #include <stdint.h>
 #include <stdlib.h>
 
 #include "bhy2.hpp"
 #include "bhy2_klio_defs.hpp"
-
-#ifdef __cplusplus
-extern "C" {
-#endif /*__cplusplus */
 
 /*!
  * @brief Reads and resets current driver status.
@@ -218,6 +219,7 @@ int8_t bhy2_klio_get_parameter(const bhy2_klio_parameter_t id,
                                uint16_t *size,
                                struct bhy2_dev *dev);
 
+/* End of CPP Guard */
 #ifdef __cplusplus
 }
 #endif /*__cplusplus */

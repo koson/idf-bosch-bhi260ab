@@ -1,5 +1,5 @@
 /**
-* Copyright (c) 2022 Bosch Sensortec GmbH. All rights reserved.
+* Copyright (c) 2023 Bosch Sensortec GmbH. All rights reserved.
 *
 * BSD-3-Clause
 *
@@ -31,14 +31,15 @@
 * POSSIBILITY OF SUCH DAMAGE.
 *
 * @file       bhy2.h
-* @date       2022-10-17
-* @version    v1.4.1
+* @date       2023-03-24
+* @version    v1.6.0
 *
 */
 
 #ifndef __BHY2_H__
 #define __BHY2_H__
 
+/* Start of CPP Guard */
 #ifdef __cplusplus
 extern "C" {
 #endif /*__cplusplus */
@@ -434,6 +435,17 @@ int8_t bhy2_set_orientation_matrix(uint8_t phys_sensor_id, struct bhy2_orient_ma
                                    struct bhy2_dev *dev);
 
 /**
+ * @brief Function to get the physical sensor information
+ * @param[in] phys_sensor_id : Sensor ID of the physical sensor
+ * @param[out] phy_sen_info : Reference to the data buffer to the store the physical sensor information
+ * @param[in] dev            : Device reference
+ * @return API error codes
+ */
+int8_t bhy2_get_phys_sensor_info(uint8_t phys_sensor_id,
+                                 struct bhy2_phys_sensor_info *phy_sen_info,
+                                 struct bhy2_dev *dev);
+
+/**
  * @brief Function to get the orientation matrix of a physical sensor
  * @param[in] phys_sensor_id : Sensor ID of the virtual sensor
  * @param[out] orient_matrix : Reference to the data buffer to the store the orientation matrix
@@ -644,6 +656,7 @@ int8_t bhy2_read_status(uint16_t *status_code,
                         uint32_t *actual_len,
                         struct bhy2_dev *dev);
 
+/* End of CPP Guard */
 #ifdef __cplusplus
 }
 #endif /*__cplusplus */
