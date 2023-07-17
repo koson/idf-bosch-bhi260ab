@@ -169,8 +169,8 @@ typedef struct bhi3_wrist_gesture_detect
 } __attribute__ ((packed)) bhi3_wrist_gesture_detect_t;
 
 static const char * const bhi3_wrist_gesture_detect_output[] = {
-    [NO_GESTURE] = "NO_GESTURE", [WRIST_SHAKE_JIGGLE] = "WRIST_SHAKE_JIGGLE", [FLICK_IN] = "FLICK_IN",
-    [FLICK_OUT] = "FLICK_OUT"
+    [NO_GESTURE] : "NO_GESTURE", [WRIST_SHAKE_JIGGLE] : "WRIST_SHAKE_JIGGLE", [FLICK_IN] : "FLICK_IN",
+    [FLICK_OUT] : "FLICK_OUT"
 }; /*lint -e528 */
 
 enum bhi3_phy_sensor_acc_power_mode {
