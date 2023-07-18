@@ -169,8 +169,10 @@ typedef struct bhi3_wrist_gesture_detect
 } __attribute__ ((packed)) bhi3_wrist_gesture_detect_t;
 
 static const char * const bhi3_wrist_gesture_detect_output[] = {
-    [NO_GESTURE] : "NO_GESTURE", [WRIST_SHAKE_JIGGLE] : "WRIST_SHAKE_JIGGLE", [FLICK_IN] : "FLICK_IN",
-    [FLICK_OUT] : "FLICK_OUT"
+    /*[NO_GESTURE] : */"NO_GESTURE",
+    /*[WRIST_SHAKE_JIGGLE] : */"WRIST_SHAKE_JIGGLE",
+    /*[FLICK_IN] : */"FLICK_IN",
+    /*[FLICK_OUT] : */"FLICK_OUT"
 }; /*lint -e528 */
 
 enum bhi3_phy_sensor_acc_power_mode {
@@ -185,11 +187,14 @@ enum bhi3_phy_sensor_gyro_power_mode {
 };
 
 static const char * const bhi3_phy_sensor_acc_pwm_output[] = {
-    [ACC_NORMAL] = "NORMAL", [ACC_LOW_POWER] = "LOW POWER"
+    /*[ACC_NORMAL] = */"NORMAL",
+    /*[ACC_LOW_POWER] = */"LOW POWER"
 }; /*lint -e528 */
 
 static const char * const bhi3_phy_sensor_gyro_pwm_output[] = {
-    [GYRO_NORMAL] = "NORMAL", [GYRO_PERFORMANCE] = "PERFORMANCE", [GYRO_LOW_POWER] = "LOW POWER"
+    /*[GYRO_NORMAL] = */"NORMAL",
+    /*[GYRO_PERFORMANCE] = */"PERFORMANCE",
+    /*[GYRO_LOW_POWER] = */"LOW POWER"
 }; /*lint -e528 */
 
 /* End of CPP Guard */
