@@ -1,37 +1,46 @@
 
-menu "Bosch BHI260AP Sensor"
-    config BHI260AP_ACTIVE
+menu "Bosch BHI Motion Sensor"
+    config BHI_MOTION_ACTIVE
         bool "Active"
         default y
-    config BHI260AP_ADDRESS
+    choice BHI_SENSOR_MODEL
+        prompt "Sensor model"
+        default BHI260AP
+        depends on BHI_MOTION_ACTIVE
+        config BHI260AP
+            bool "BHI260AP"
+        config BHI380
+            bool "BHI380"
+    endchoice
+    config BHI_MOTION_ADDRESS
         hex
         prompt "Gyro/Accel BHI260AP Sensor Address"
         default 0x28
-        depends on BHI260AP_ACTIVE
-    config PIN_BHI260AP_RESET
+        depends on BHI_MOTION_ACTIVE
+    config PIN_BHI_RESET
         int "Reset Pin"
         default 37
-        depends on BHI260AP_ACTIVE
-    config PIN_BHI260AP_INTERRUPT
+        depends on BHI_MOTION_ACTIVE
+    config PIN_BHI_INTERRUPT
         int "Interrupt Pin"
         default 36
-        depends on BHI260AP_ACTIVE
-    choice BME260AP_OUTPUT_MODE
+        depends on BHI_MOTION_ACTIVE
+    choice BHI_OUTPUT_MODE
         prompt "Output Mode"
         default EULER
-        depends on BHI260AP_ACTIVE
+        depends on BHI_MOTION_ACTIVE
         config EULER
             bool "EULER"
         config QUATERNION
             bool "QUATERNION"
     endchoice
-    choice BME260AP_FLASH_MODE
+    choice BHI_FLASH_MODE
         prompt "Flash Mode"
-        default BME260AP_USE_RAM
-        depends on BHI260AP_ACTIVE
-        config BME260AP_USE_RAM
+        default BHI_USE_RAM
+        depends on BHI_MOTION_ACTIVE
+        config BHI_USE_RAM
             bool "RAM"
-        config BME260AP_USE_FLASH
+        config BHI_USE_FLASH
             bool "FLASH"
     endchoice
 endmenu

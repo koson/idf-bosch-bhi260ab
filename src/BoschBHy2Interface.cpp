@@ -10,7 +10,7 @@
 #include "../driver/bhy2.hpp"
 #include "../driver/bhy2_parse.hpp"
 #include "nvs_flash.h"
-#ifdef CONFIG_BHI260AP_ACTIVE
+#ifdef CONFIG_BHI_MOTION_ACTIVE
 
 #define WORK_BUFFER_SIZE 2048
 
@@ -41,8 +41,8 @@ namespace Motion
         (void)intf_ptr;
         try
         {
-            _bmi260Sensor->getBus()->syncWrite(I2CAddress(CONFIG_BHI260AP_ADDRESS), {reg_addr});
-            vector<uint8_t> data = _bmi260Sensor->getBus()->syncRead(I2CAddress(CONFIG_BHI260AP_ADDRESS), len);
+            _bmi260Sensor->getBus()->syncWrite(I2CAddress(CONFIG_BHI_MOTION_ADDRESS), {reg_addr});
+            vector<uint8_t> data = _bmi260Sensor->getBus()->syncRead(I2CAddress(CONFIG_BHI_MOTION_ADDRESS), len);
             memcpy(reg_data, data.data(), len);
             return ESP_OK;
         }
@@ -65,7 +65,7 @@ namespace Motion
             {
                 data.push_back(reg_data[i]);
             }
-            _bmi260Sensor->getBus()->syncWrite(I2CAddress(CONFIG_BHI260AP_ADDRESS), data);
+            _bmi260Sensor->getBus()->syncWrite(I2CAddress(CONFIG_BHI_MOTION_ADDRESS), data);
             return ESP_OK;
         }
         catch (const I2CException &e)
@@ -195,7 +195,7 @@ namespace Motion
         int8_t temp_rslt;
         int8_t rslt = BHY2_OK;
 
-#ifdef CONFIG_BME260AP_USE_FLASH
+#ifdef CONFIG_BHI_USE_FLASH
         if (boot_stat & BHY2_BST_FLASH_DETECTED)
         {
             uint32_t start_addr = BHY2_FLASH_SECTOR_START_ADDR;
@@ -234,7 +234,7 @@ namespace Motion
                 }
             }
 
-#ifdef CONFIG_BME260AP_USE_FLASH
+#ifdef CONFIG_BHI_USE_FLASH
             rslt = bhy2_upload_firmware_to_flash_partly(&bhy2_firmware_image[i], i, incr, &bhy2Device);
 #else
             uint8_t firmware[incr];
@@ -247,7 +247,7 @@ namespace Motion
 
         printf("\n");
 
-#ifdef CONFIG_BME260AP_USE_FLASH
+#ifdef CONFIG_BHI_USE_FLASH
         printf("Booting from Flash.\r\n");
         rslt = bhy2_boot_from_flash(&bhy2Device);
 #else
@@ -284,12 +284,12 @@ namespace Motion
 
     void configItr()
     {
-        if (CONFIG_PIN_BHI260AP_INTERRUPT > GPIO_NUM_NC)
+        if (CONFIG_PIN_BHI_INTERRUPT > GPIO_NUM_NC)
         {
             gpio_config_t io_conf = {};
             io_conf.intr_type = GPIO_INTR_DISABLE;
             io_conf.mode = GPIO_MODE_INPUT;
-            io_conf.pin_bit_mask = (1ULL << CONFIG_PIN_BHI260AP_INTERRUPT);
+            io_conf.pin_bit_mask = (1ULL << CONFIG_PIN_BHI_INTERRUPT);
             io_conf.pull_down_en = GPIO_PULLDOWN_DISABLE;
             io_conf.pull_up_en = GPIO_PULLUP_DISABLE;
             gpio_config(&io_conf);
@@ -298,20 +298,20 @@ namespace Motion
 
     void configReset()
     {
-        if (CONFIG_PIN_BHI260AP_RESET > GPIO_NUM_NC)
+        if (CONFIG_PIN_BHI_RESET > GPIO_NUM_NC)
         {
             gpio_config_t io_conf = {};
             io_conf.intr_type = GPIO_INTR_DISABLE;
             io_conf.mode = GPIO_MODE_OUTPUT;
-            io_conf.pin_bit_mask = (1ULL << CONFIG_PIN_BHI260AP_RESET);
+            io_conf.pin_bit_mask = (1ULL << CONFIG_PIN_BHI_RESET);
             io_conf.pull_down_en = GPIO_PULLDOWN_DISABLE;
             io_conf.pull_up_en = GPIO_PULLUP_DISABLE;
             gpio_config(&io_conf);
-            gpio_set_level((gpio_num_t)CONFIG_PIN_BHI260AP_RESET, 0);
+            gpio_set_level((gpio_num_t)CONFIG_PIN_BHI_RESET, 0);
 
             vTaskDelay(pdMS_TO_TICKS(10));
 
-            gpio_set_level((gpio_num_t)CONFIG_PIN_BHI260AP_RESET, 1);
+            gpio_set_level((gpio_num_t)CONFIG_PIN_BHI_RESET, 1);
         }
     }
 
@@ -420,7 +420,7 @@ namespace Motion
         {
 
             vTaskDelay(pdMS_TO_TICKS(100));
-            if (CONFIG_PIN_BHI260AP_INTERRUPT > GPIO_NUM_NC && gpio_get_level((gpio_num_t)CONFIG_PIN_BHI260AP_INTERRUPT))
+            if (CONFIG_PIN_BHI_INTERRUPT > GPIO_NUM_NC && gpio_get_level((gpio_num_t)CONFIG_PIN_BHI_INTERRUPT))
             {
                 /* Data from the FIFO is read and the relevant callbacks if registered are called */
                 rslt = bhy2_get_and_process_fifo(work_buffer, WORK_BUFFER_SIZE, &bhy2Device);
