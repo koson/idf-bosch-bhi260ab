@@ -43,8 +43,6 @@
 #include "../driver/bhy2.hpp"
 #include "../driver/bhi3.hpp"
 #include "../driver/bhi3_multi_tap.hpp"
-#include "../driver/bhy2_klio.hpp"
-#include "../driver/bhy2_swim.hpp"
 #include "../driver/bhy2_bsec.hpp"
 #include "../driver/bhy2_head_tracker.hpp"
 
@@ -63,6 +61,5 @@ char *get_sensor_name(uint8_t sensor_id);
 float get_sensor_default_scaling(uint8_t sensor_id);
 char *get_sensor_parse_format(uint8_t sensor_id);
 char *get_sensor_axis_names(uint8_t sensor_id);
-char *get_klio_error(bhy2_klio_driver_error_state_t error);
 
 #endif /* _COMMON_H_ */
