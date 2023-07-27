@@ -282,6 +282,23 @@ namespace Motion
         return rslt;
     }
 
+    static void tiltDetectionCallback(const struct bhy2_fifo_parse_data_info *callback_info, void *callback_ref)
+    {
+        (void)callback_ref;
+        uint32_t currentTimeS = {0};
+        if (callback_info->data_size != 1) /* Check for a valid payload size. Includes sensor ID */
+        {
+            ESP_LOGE("BHy2", "Unexpected Tilt payload! size: %d", callback_info->data_size);
+            return;
+        }
+
+        uint64_t timestamp = *callback_info->time_stamp; /* Store the last timestamp */
+        timestamp = timestamp * 15625;                   /* Timestamp is now in nanoseconds */
+        currentTimeS = (uint32_t)(timestamp / UINT64_C(1000000000));
+
+        ESP_LOGI("BHy2", "Tilt detected! SID: %u; T: %lu", callback_info->sensor_id, currentTimeS);
+    }
+
     void configItr()
     {
         if (CONFIG_PIN_BHI_INTERRUPT > GPIO_NUM_NC)
@@ -403,6 +420,8 @@ namespace Motion
         rslt = bhy2_register_fifo_parse_callback(SENSOR_ID, dataCallback, NULL, &bhy2Device);
 #endif
         print_api_error(rslt);
+        rslt = bhy2_register_fifo_parse_callback(BHY2_SENSOR_ID_TILT_DETECTOR, tiltDetectionCallback, (void *)&accuracy, &bhy2Device);
+        print_api_error(rslt);
 
         rslt = bhy2_get_and_process_fifo(work_buffer, WORK_BUFFER_SIZE, &bhy2Device);
         print_api_error(rslt);
@@ -410,12 +429,15 @@ namespace Motion
         rslt = bhy2_update_virtual_sensor_list(&bhy2Device);
         print_api_error(rslt);
 
-        float sample_rate = 50.0;       /* Read out data measured at 50Hz */
-        uint32_t report_latency_ms = 0; /* Report immediately */
-        rslt = bhy2_set_virt_sensor_cfg(SENSOR_ID, sample_rate, report_latency_ms, &bhy2Device);
+
+        // rslt = bhy2_set_virt_sensor_cfg(SENSOR_ID, 50.0, 0, &bhy2Device);
+        // print_api_error(rslt);
+        // ESP_LOGI("BHy2", "Enable %s.", get_sensor_name(SENSOR_ID));
+
+        rslt = bhy2_set_virt_sensor_cfg(BHY2_SENSOR_ID_TILT_DETECTOR, 50.0, 0, &bhy2Device);
         print_api_error(rslt);
-        ESP_LOGI("BHy2", "Enable %s at %.2fHz.", get_sensor_name(SENSOR_ID), sample_rate);
-        bool done = false;
+        ESP_LOGI("BHy2", "Enabled %s.", get_sensor_name(BHY2_SENSOR_ID_TILT_DETECTOR));
+
         while (rslt == BHY2_OK)
         {
 
@@ -425,12 +447,9 @@ namespace Motion
                 /* Data from the FIFO is read and the relevant callbacks if registered are called */
                 rslt = bhy2_get_and_process_fifo(work_buffer, WORK_BUFFER_SIZE, &bhy2Device);
             }
-            else
-            {
-                rslt = bhy2_get_and_process_fifo(work_buffer, WORK_BUFFER_SIZE, &bhy2Device);
-            }
             print_api_error(rslt);
         }
+
         return ESP_OK;
     }
 }
